@@ -40,7 +40,7 @@ const App = () => {
             <Text className="text-3xl text-white font-bold text-center">
               Discover Endless{"\n"}
               Possibilities with{" "}
-              <Text className="text-secondary-200">Aora</Text>
+              <Text className="text-secondary-200">Plantary</Text>
             </Text>
 
             <Image
@@ -52,7 +52,7 @@ const App = () => {
 
           <Text className="text-sm font-pregular text-gray-100 mt-7 text-center">
             Where Creativity Meets Innovation: Embark on a Journey of Limitless
-            Exploration with Aora
+            Exploration with Plantary
           </Text>
 
           <CustomButton
@@ -64,7 +64,6 @@ const App = () => {
       </ScrollView>
 
       <StatusBar backgroundColor="#161622" style="light" /> 
-      {/* iphone status bar( time.. ) */}
     
     </SafeAreaView>
     );
