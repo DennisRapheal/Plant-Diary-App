@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native'
 import React from 'react'
-import { icons } from '@/constants';
+import { icons } from '../constants';
 
 const DiaryCard = ({title, onDelete}) => {
   return (

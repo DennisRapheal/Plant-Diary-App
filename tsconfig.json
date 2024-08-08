@@ -1,17 +1,27 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "es2015"],
+    "jsx": "react",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
     "strict": true,
+    "noImplicitAny": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+      "*": ["src/*"]
+    },
+    "types": ["nativewind/types"]
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "app/_layout.jsx", "app/Search/[query].jsx", "app/(tabs)/profile.tsx", "app/(tabs)/home.tsx", "app/(tabs)/create.tsx", "app/(tabs)/Bookmark.tsx", "app/(tabs)/_layout.tsx", "app/index.jsx"  ]
 }
