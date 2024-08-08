@@ -7,19 +7,20 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
-    <View className="flex items-center justify-center gap-2">
+    <View className="flex items-center justify-center gap1">
       <Image
         source={icon}
         resizeMode="contain"
         tintColor={color}
-        className="w-6 h-6"
+        // icon size
+        className="w-20 h-20"
       />
-      <Text
+      {/* <Text
         className={`${focused ? "font-psemibold" : "font-pregular"} text-xs`}
         style={{ color: color }}
       >
         {name}
-      </Text>
+      </Text> */}
     </View>
   );
 };
@@ -30,14 +31,15 @@ const TabsLayout = () => {
       <Tabs
         // tabs styling
         screenOptions={{
-          tabBarActiveTintColor: "#FFA001",
+          tabBarActiveTintColor: "#fff", // focus color
           tabBarInactiveTintColor: "#CDCDE0",
           tabBarShowLabel: false,
           tabBarStyle: {
-            backgroundColor: "#161622",
-            borderTopWidth: 1,
-            borderTopColor: "#232533",
-            height: 84,
+            shadowRadius: 4,
+            borderTopLeftRadius: 15,
+            borderTopRightRadius: 15,
+            backgroundColor: "#72847a",
+            height: 100,
           },
         }}
       >
@@ -65,7 +67,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.plus}
+                icon={icons.create}
                 color={color}
                 name="Create"
                 focused={focused}
@@ -77,13 +79,13 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="identify"
           options={{
-            title: "identify",
+            title: "Identify",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.bookmark}
+                icon={icons.identify}
                 color={color}
-                name="Bookmark"
+                name="identify"
                 focused={focused}
               />
             ),
