@@ -3,6 +3,7 @@ import Slider from '@react-native-community/slider';
 import { useState } from 'react'
 import AddDiaryBtn from '../../components/AddDiaryBtn';
 import * as ImagePicker from 'expo-image-picker';
+import UplaodImgBlock from '../../components/UplaodImgBlock';
 
 
 const create = () => {
@@ -31,16 +32,12 @@ const create = () => {
   return (
     <View style={styles.container}>
       {/* // upload image  */}
-      <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
-        {image ? (
-          <Image source={{ uri: image }} style={styles.image} />
-        ) : (
-          <View style={styles.uploadContainer}>
-            <Text style={styles.uploadText}>upload an image!</Text>
-          </View>
-        )}
-      </TouchableOpacity>
-
+      
+      <UplaodImgBlock 
+        image={image}
+        pickImage={pickImage}
+        script={"uplaod plant image"}
+      />
 
       <View style={styles.formContainer}>
         <TextInput
