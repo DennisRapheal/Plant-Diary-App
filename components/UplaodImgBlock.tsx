@@ -1,17 +1,20 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native'
 import React from 'react'
 
-const UplaodImgBlock = ({image, pickImage, script}) => {
+const UplaodImgBlock = ({
+    image, pickImage, script
+  }) => {
+
   return (
     <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
-        {image ? (
-          <Image source={{ uri: image }} style={styles.image} />
-        ) : (
-          <View style={styles.uploadContainer}>
-            <Text style={styles.uploadText}>{script}</Text>
-          </View>
-        )}
-      </TouchableOpacity>
+      {image  ? (
+        <Image source={{ uri: image }} style={styles.image} />
+      ) : (
+        <View style={styles.uploadContainer}>
+          <Text style={styles.uploadText}>{script}</Text>
+        </View>
+      )}
+    </TouchableOpacity>
   )
 }
 
@@ -32,6 +35,7 @@ const styles = StyleSheet.create({
       image: {
         width: '100%',
         height: '100%',
+        borderRadius: 8,
       },
       uploadContainer: {
         justifyContent: 'center',

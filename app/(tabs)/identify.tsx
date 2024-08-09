@@ -1,29 +1,45 @@
-import { View, Text, TextInput, Button, Image, TouchableOpacity, Switch, StyleSheet } from 'react-native'
-import { useState } from 'react'
+import { View, Text, TextInput, Button, Image, TouchableOpacity, Alert, StyleSheet } from 'react-native'
+import { useState, useEffect} from 'react'
 import React from 'react'
 import * as ImagePicker from 'expo-image-picker';
 import UplaodImgBlock from '../../components/UplaodImgBlock';
 import AddDiaryBtn from '../../components/AddDiaryBtn';
+import useFetch from '../../hooks/useFetch'; 
 
 const search = () => {
 
   const [image, setImage] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [shouldFetch, setShouldFetch] = useState(false);
+  const { returnData, isLoading, error, refetch } = useFetch(image);
 
-  const identify = async () => {
+  useEffect(() => {
+    if (shouldFetch) {
+      refetch;
+      setShouldFetch(false);
+    }
+  }, [shouldFetch]);
 
+  const identify = () => {
+    if (image != null) {
+      setShouldFetch(true); 
+    } else {
+      Alert.alert('Oops...', 'No image is selected. ')
+    }
   }
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, // Allow only images
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
 
     if (!result.canceled) {
-      setImage(result.uri);
+      setImage(result.assets[0].uri);
+    } else {
+      Alert.alert('Oops...', 'Please upload an image again')
     }
   };
 
@@ -36,6 +52,7 @@ const search = () => {
         pickImage={pickImage}
         script={"pick an image to identify"}
       />
+      <Text>{JSON.stringify(returnData)}</Text>
       <View style={styles.formContainer} >
         <AddDiaryBtn 
           title="identify the plant!"

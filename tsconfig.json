@@ -14,7 +14,8 @@
     "isolatedModules": true,
     "baseUrl": ".",
     "paths": {
-      "*": ["src/*"]
+      "*": ["src/*"], 
+      // "@env": ["declarations.d.ts"],
     },
     "types": ["nativewind/types"]
   },
