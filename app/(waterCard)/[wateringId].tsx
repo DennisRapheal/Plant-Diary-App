@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import { useLocalSearchParams } from 'expo-router';
 import { View, Text, TouchableOpacity, TextInput, Switch, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
 const InputCard = () => {
+
+    const id = useLocalSearchParams()
+    console.log(id)
 
   const [isWatered, setIsWatered] = useState(false);
   const [height, setHeight] = useState('');

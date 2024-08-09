@@ -1,5 +1,6 @@
+import { Link, useLocalSearchParams } from 'expo-router';
 import React, { useState, useRef } from 'react';
-import { SafeAreaView, View, Text, StyleSheet, Switch, Dimensions, Animated } from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet, Switch, Dimensions, Animated, TouchableOpacity } from 'react-native';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = 250;
@@ -25,22 +26,28 @@ const Card = ({ item, index, scrollX }) => {
     outputRange: [0.5, 1, 0.5],
   });
 
+  const id = useLocalSearchParams()
+  console.log(id)
 
   return (
-    <Animated.View
-      style={[
-        styles.card,
-        {
-          transform: [{ scale }],
-          opacity,
-        },
-      ]}
-    >
-      <Text style={styles.cardDate}>{item.date}</Text>
-      <View style={styles.imagePlaceholder}></View>
-      <Text style={styles.cardDetail}>Height: {item.height} cm</Text>
-      <Text style={styles.cardDetail}>Note: {item.note}</Text>
-    </Animated.View>
+    <Link href={`/(waterCard)/1`} asChild>
+      <TouchableOpacity>
+        <Animated.View
+          style={[
+            styles.card,
+            {
+              transform: [{ scale }],
+              opacity,
+            },
+          ]}
+        >
+          <Text style={styles.cardDate}>{item.date}</Text>
+          <View style={styles.imagePlaceholder}></View>
+          <Text style={styles.cardDetail}>Height: {item.height} cm</Text>
+          <Text style={styles.cardDetail}>Note: {item.note}</Text>
+        </Animated.View>
+      </TouchableOpacity>
+    </Link>
   );
 };
 

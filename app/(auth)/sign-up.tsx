@@ -7,8 +7,11 @@ import { images } from "../../constants";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
 import React  from "react";
-import {createUser} from "../../lib/appwrite" 
 import { useGlobalContext } from "../../context/GlobalProvider";
+
+import { auth, db } from "lib/firebase";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
 
 const SignUp = () => {
     const { setUser, setIsLogged } = useGlobalContext();
@@ -23,18 +26,21 @@ const SignUp = () => {
         if (!form.username || !form.email || !form.password ){
             Alert.alert('Error', 'Please complete all the fields')
         }
-
+        const { username, email, password } = form
+        console.log(username, email, password)
         setIsSubmitting(true);
 
         try {
-            const result = await createUser(form.email, form.password, form.username)
-            setUser(result);
-            setIsLogged(true);
-            router.replace('/home')
-        } catch (error) {
-            Alert.alert('Error', error.message)
-        } finally {
-            setIsSubmitting(false)
+          const res = await createUserWithEmailAndPassword(auth, email, password)
+          await setDoc(doc(db, "users", res.user.uid), {
+            username: username,
+            emial: email,
+            id: res.user.uid,
+          });
+        }catch (err) {
+          console.log(err)
+        }finally {
+          setIsSubmitting(false)
         }
     }; 
 
@@ -62,6 +68,7 @@ const SignUp = () => {
                 value={form.username}
                 handleChangeText={(e) => setForm({ ...form, username: e })}
                 otherStyles="mt-7"
+                placeholder={"User Name"}
                 keyboardType="email-address"
               />
 
@@ -70,6 +77,7 @@ const SignUp = () => {
                 value={form.email}
                 handleChangeText={(e) => setForm({ ...form, email: e })}
                 otherStyles="mt-7"
+                placeholder={"Email"}
                 keyboardType="email-address"
               />
     
@@ -77,6 +85,7 @@ const SignUp = () => {
                 title="Password"
                 value={form.password}
                 handleChangeText={(e) => setForm({ ...form, password: e })}
+                placeholder={"Password"}
                 otherStyles="mt-7"
               />
     

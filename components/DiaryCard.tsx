@@ -5,10 +5,10 @@ import { Link, router } from 'expo-router';
 
 const DiaryCard = ({title, onDelete}) => {
   const handlePress = () => {
-    router.push("/Diary/DiaryHome")
+    router.push("/(diary)/1")
   }
   return (
-    <Link href={'/Diary/DiaryHome' } asChild>
+    <Link href={'/(diary)/1' } asChild>
       <TouchableOpacity style={styles.card} onPress = {() => {handlePress}}>
         <View style={styles.content}>
           <Text>whould be image</Text>
