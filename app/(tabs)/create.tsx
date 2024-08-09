@@ -4,7 +4,7 @@ import { useState } from 'react'
 import AddDiaryBtn from '../../components/AddDiaryBtn';
 import * as ImagePicker from 'expo-image-picker';
 import UplaodImgBlock from '../../components/UplaodImgBlock';
-
+import React from 'react';
 
 const create = () => {
   const [image, setImage] = useState<string | null>(null);

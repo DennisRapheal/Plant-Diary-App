@@ -1,9 +1,10 @@
 import { StatusBar } from "expo-status-bar";
-import { Redirect, Tabs } from "expo-router";
+import { Redirect, Stack, Tabs } from "expo-router";
 import { Image, Text, View } from "react-native";
 
 import { icons } from "../../constants";
 import { useGlobalContext } from "../../context/GlobalProvider";
+import React from "react";
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
@@ -28,8 +29,7 @@ const TabIcon = ({ icon, color, name, focused }) => {
 const TabsLayout = () => {
   return (
     <>
-      <Tabs
-        // tabs styling
+        <Tabs
         screenOptions={{
           tabBarActiveTintColor: "#fff", // focus color
           tabBarInactiveTintColor: "#CDCDE0",
@@ -43,7 +43,6 @@ const TabsLayout = () => {
           },
         }}
       >
-        // create a route button for all pages
         <Tabs.Screen 
           name='home'
           options={{
