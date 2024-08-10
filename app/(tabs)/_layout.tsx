@@ -3,10 +3,16 @@ import { Redirect, Stack, Tabs } from "expo-router";
 import { Image, Text, View } from "react-native";
 
 import { icons } from "../../constants";
-import { useGlobalContext } from "../../context/GlobalProvider";
-import React from "react";
+import { useGlobalContext } from "context/GlobalProvider";
+import React, { useEffect } from "react";
+import { useUserStore } from "lib/userStore";
 
 const TabIcon = ({ icon, color, name, focused }) => {
+
+  const { user, Loading, isLogged } = useGlobalContext()
+
+  if (!isLogged ) return <Redirect href='/index'/>
+
   return (
     <View className="flex items-center justify-center gap1">
       <Image

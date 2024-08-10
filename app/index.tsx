@@ -7,12 +7,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../constants";
 import CustomButton  from "../components/CustomButton";
 import { useGlobalContext } from "../context/GlobalProvider";
-
-// import { TailwindProvider } from 'nativewind';
+import { useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from 'lib/firebase';
+import { useUserStore } from 'lib/userStore';
 
 const App = () => {
-    const {isLoading, isLoggedIn } = useGlobalContext();
-    if(!isLoading && isLoggedIn) return <Redirect href="/home"/>
+
+    const { currentUser, isLoading } = useUserStore()
+
+    if(!isLoading && currentUser) return <Redirect href="/home"/>
     
     return (
         <SafeAreaView className="bg-primary h-full">
@@ -57,7 +61,7 @@ const App = () => {
 
           <CustomButton
             title="Continue with Email"
-            handlePress={async () => router.push("/(auth)/sign-up")}
+            handlePress={async () => router.push("/(auth)/sign-in")}
             containerStyles="w-full mt-7"
           />
         </View>

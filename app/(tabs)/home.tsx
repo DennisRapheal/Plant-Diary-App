@@ -1,21 +1,34 @@
 import { StyleSheet, Text, View, FlatList, ScrollView } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import DiaryCard from '../../components/DiaryCard';
 import EmptyState from '../../components/EmptyState'
 import { images } from "../../constants";
 import { icons } from "../../constants";
 import LogoutBtn from "../../components/LogoutBtn";
 import ProfileBtn from "../../components/ProfileBtn";
+import { useUserStore } from 'lib/userStore';
+import { auth } from 'lib/firebase';
+import { useGlobalContext } from 'context/GlobalProvider';
 
 const home = () => {
+
+  const handleLogout = (e) => {
+    e.preventDefault(); 
+    auth.signOut()
+    router.push('/')
+  };
+
+  const { user, Loading } = useGlobalContext()
+
   return (
     <SafeAreaView className="bg-white" style={{ flex: 1 }}>
       <View className="w-full flex-row justify-between  items-center"  style={{height: "15%" }}> 
       {/* w-full flex justify-center items-center min-h-[85xh] px-4 */}
         <ProfileBtn iconUrl = {images.profile} handlePress={() => console.log('Header button pressed')}/>
-        <LogoutBtn iconUrl = {icons.logout} handlePress={() => console.log('Logout button pressed')}/>
+        <Text>{user?.username}</Text>
+        <LogoutBtn iconUrl = {icons.logout} handlePress={handleLogout}/>
       </View>
       
       <FlatList

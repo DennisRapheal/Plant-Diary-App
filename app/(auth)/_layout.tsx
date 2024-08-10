@@ -1,14 +1,17 @@
 import { Redirect, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useGlobalContext } from "../../context/GlobalProvider";
-
+import React from "react";
+import { useUserStore } from "lib/userStore";
+import { useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "lib/firebase";
 
 const AuthLayout = () => {
-    const { loading, isLogged } = useGlobalContext();
 
-    if (!loading && isLogged) return <Redirect href="/home" />;
-    
-  return (
+    const { user, Loading } = useGlobalContext()
+    if( !Loading && user ) return <Redirect href='/home'/>
+    return (
     <>
         <Stack>
             <Stack.Screen

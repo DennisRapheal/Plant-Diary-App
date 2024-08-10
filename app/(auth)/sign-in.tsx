@@ -7,10 +7,12 @@ import { images } from "../../constants";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
 import React  from "react";
-import { getCurrentUser, signIn } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
 
+import { auth } from "lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 const SignIn = () => {
+
     const { setUser, setIsLogged } = useGlobalContext();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [form, setForm] = useState({
@@ -19,26 +21,19 @@ const SignIn = () => {
     });
 
     const submit = async () => {
-        if (!form.email || !form.password ){
-            Alert.alert('Error', 'Please complete all the fields')
-        }
-
-        setIsSubmitting(true);
+        const { email, password } = form
+        setIsSubmitting(true)
+        setIsLogged(true);
 
         try {
-            await signIn(form.email, form.password)
-            const result = await getCurrentUser();
-            setUser(result);
-            setIsLogged(true);
-
-            Alert.alert("Success", "User signed in successfully");
-            router.replace("/home");
-        } catch (error) {
-            Alert.alert('Error', error.message)
-        } finally {
+            await signInWithEmailAndPassword(auth, email, password);
+        }catch(err) {
+            console.log(err)
+        }finally {
+            setIsLogged(false);
             setIsSubmitting(false)
         }
-    };  
+    }
 
     return (
         <SafeAreaView className="bg-primary h-full">
@@ -65,6 +60,7 @@ const SignIn = () => {
                 handleChangeText={(e) => setForm({ ...form, email: e })}
                 otherStyles="mt-7"
                 keyboardType="email-address"
+                placeholder={"Enter your email address"}
               />
     
               <FormField
@@ -72,6 +68,7 @@ const SignIn = () => {
                 value={form.password}
                 handleChangeText={(e) => setForm({ ...form, password: e })}
                 otherStyles="mt-7"
+                placeholder={"Enter your password"}
               />
     
               <CustomButton

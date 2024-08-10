@@ -4,6 +4,9 @@ import { SplashScreen, Slot, Stack } from 'expo-router'
 import { useFonts } from 'expo-font'
 import { useEffect } from 'react'
 import GlobalProvider from '../context/GlobalProvider'
+import { useUserStore } from 'lib/userStore'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from 'lib/firebase'
 
 SplashScreen.preventAutoHideAsync();
 
@@ -31,7 +34,6 @@ const RootLayout = () => {
     if (!fontsLoaded && !error) {
         return null;
     }
-
     
     return (
         <GlobalProvider>
