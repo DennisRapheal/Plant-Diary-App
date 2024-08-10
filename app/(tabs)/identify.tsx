@@ -1,28 +1,24 @@
-import { View, Text, TextInput, Button, Image, TouchableOpacity, Alert, StyleSheet } from 'react-native'
+import { View, Text, TextInput, Button, Image, Switch, Alert, StyleSheet } from 'react-native'
 import { useState, useEffect} from 'react'
 import React from 'react'
 import * as ImagePicker from 'expo-image-picker';
+import { useRouter } from 'expo-router';
 import UplaodImgBlock from '../../components/UplaodImgBlock';
 import AddDiaryBtn from '../../components/AddDiaryBtn';
-import useFetch from '../../hooks/useFetch'; 
 
-const search = () => {
-
+const identify = () => {
+  const router = useRouter();
   const [image, setImage] = useState<string | null>(null);
+  // deal with btn
   const [isAdding, setIsAdding] = useState(false);
-  const [shouldFetch, setShouldFetch] = useState(false);
-  const { returnData, isLoading, error, refetch } = useFetch(image);
 
-  useEffect(() => {
-    if (shouldFetch) {
-      refetch;
-      setShouldFetch(false);
-    }
-  }, [shouldFetch]);
 
-  const identify = () => {
+  const clickIdentify = () => {
     if (image != null) {
-      setShouldFetch(true); 
+      router.push({
+        pathname: '/(test)/[result]',
+        params: { result: image },
+      });
     } else {
       Alert.alert('Oops...', 'No image is selected. ')
     }
@@ -46,32 +42,32 @@ const search = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Let's find your plant</Text>
-      {/* // upload image  */}
       <UplaodImgBlock 
         image={image}
         pickImage={pickImage}
         script={"pick an image to identify"}
       />
-      <Text>{JSON.stringify(returnData)}</Text>
-      <View style={styles.formContainer} >
+
+      <View style={styles.formContainer2} >
         <AddDiaryBtn 
           title="identify the plant!"
-          handlePress={identify}
+          handlePress={clickIdentify}
           isLoading={isAdding}
         />
       </View>
-      
     </View>
   )
 }
 
-export default search
+export default identify
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 50, 
     flex: 1,
+    alignItems: 'center',
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
   title: {
     fontSize: 24,
@@ -80,11 +76,15 @@ const styles = StyleSheet.create({
     marginVertical: 50,
   },
   formContainer: {
-    flex: 1,
     width: '100%',
-    height: '40%', 
     padding: 16,
-    paddingTop: "50%", 
+    backgroundColor: '#4a5b4c',
+    borderRadius: 10,
+  },
+  formContainer2: {
+    height: '40%',
+    width: '100%',
+    padding: 16,
     backgroundColor: '#4a5b4c',
     borderRadius: 10,
   },

@@ -24,5 +24,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "app/_layout.jsx", "app/Search/[query].jsx", "app/(tabs)/profile.tsx", "app/(tabs)/home.tsx", "app/(tabs)/create.tsx", "app/(tabs)/Bookmark.tsx", "app/(tabs)/_layout.tsx", "app/index.jsx"  ]
+  , "app/_layout.tsx", "app/result.tsx", "app/(tabs)/create.tsx", "app/(tabs)/home.tsx", "app/(tabs)/identify.tsx", "app/(tabs)/_layout.tsx", "app/index.tsx"  ]
 }

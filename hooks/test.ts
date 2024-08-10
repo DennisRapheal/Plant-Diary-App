@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 
-const ApiKey = 'hkcCM462i6EIBIXaYzVPWfubzUvfwGabizW9c26MDtGM1YUHPS';
+const ApiKey = '2b10sL5sTH5tnq7zhTwNVCvYge';
 
 // imagePath should be like: images.plant !!!!!
 const useFetch = async (imagePath) => {
@@ -32,16 +32,13 @@ const useFetch = async (imagePath) => {
           throw new Error('Image path is not set.');
         }
         const base64String = await convertFileToBase64(imagePath);
-        const apiInfo = {
-          api_key: ApiKey,
-          images: [base64String],
-          classification_level: 'all',
-        };
 
-        const response = await axios.post('https://plant.id/api/v3/identification', apiInfo, {
+        const response = await axios.post('https://plant.id/api/v3/identification', {
           params: {
-            details: 'common_names,url,description,taxonomy,rank,gbif_id,inaturalist_id,image,synonyms,edible_parts,watering',
-            language: 'en',
+            'nb-results': '3', 
+            'type': 'kt', 
+            'api-key': ApiKey,
+            'images': [base64String]
           },
           headers: {
             'Content-Type': 'application/json',
