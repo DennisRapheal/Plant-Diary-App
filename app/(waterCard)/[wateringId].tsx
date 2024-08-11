@@ -6,8 +6,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const InputCard = () => {
 
-    const id = useLocalSearchParams()
-    console.log(id)
+  const id = useLocalSearchParams()
+  console.log(id)
 
   const [isWatered, setIsWatered] = useState(false);
   const [height, setHeight] = useState('');
@@ -17,7 +17,6 @@ const InputCard = () => {
     <KeyboardAvoidingView>
       <View style={styles.infoCard}>
         <Text style={styles.dateText}>2024 8/15</Text>
-
         <View style={styles.row}>
           <Text>Watered</Text>
           <Switch
@@ -72,6 +71,11 @@ const Bookmark = () => {
             <Icon name="file-upload" size={48} color="#888" />
             <Text style={styles.uploadText}>upload your plant image!</Text>
           </TouchableOpacity>
+          {/* <UplaodImgBlock 
+            image={""}
+            pickImage={()=>{}}
+            script={"uplaod plant image"}
+          /> */}
         </ScrollView>
       </TouchableWithoutFeedback>
       <InputCard/>

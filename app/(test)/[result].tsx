@@ -1,13 +1,12 @@
-import { View, Text, TextInput, Button, Image, Switch, Alert, StyleSheet, ActivityIndicator} from 'react-native'
+import { View, Text, ScrollView, Alert, StyleSheet, ActivityIndicator} from 'react-native'
 import { useState, useEffect} from 'react'
 import React from 'react'
-import * as ImagePicker from 'expo-image-picker';
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter, useLocalSearchParams} from 'expo-router';
-import UplaodImgBlock from '../../components/UplaodImgBlock';
-import AddDiaryBtn from '../../components/AddDiaryBtn';
-import useFetch from '../../hooks/useFetch'; 
+import useFetch from '../../hooks/useFetch';
 import PlantInfo from '../../components/PlantInfo';
 import DiarySettings from '../../components/DiarySettings';
+import { useGlobalContext } from 'context/GlobalProvider';
 
 const result = () => {
   const params = useLocalSearchParams();
@@ -17,7 +16,7 @@ const result = () => {
   const [isLoading, setIsLoading] = useState(null)
   const [error, setError] = useState(null)
   const { Data, Loading, err, fetching} = useFetch(params.result);
-      
+  const { user } = useGlobalContext()
   
   const [isAdding, setIsAdding] = useState(false);
   // const [waitFetch, setWaitFetch] = useState(true);
@@ -45,6 +44,7 @@ const result = () => {
   //     console.log('Return Data Not Fetched:', returnData);
   //   }
   // }, [returnData, isLoading]);
+
   useEffect(() => {
     if (returnData==null || returnData=='undefined') {
       fetching
@@ -61,8 +61,9 @@ const result = () => {
     setPressed(true)
   }
   return (
-    <View style={styles.container}>
-      <>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>We Find Your Plant!</Text>
+      <View style={styles.formContainer2}>
         { false? (
           <ActivityIndicator size="large" />
         ) : (
@@ -71,21 +72,17 @@ const result = () => {
            details= {returnData}
           />
         )}
-      </>
+      </View>
       <View style={styles.formContainer}>
         <DiarySettings 
           identifyPlantName={plantName}
           identifyPlantType={plantType}
           identifyWater={plantWater}
-          btnPressed={pressed}
-        />
-        <AddDiaryBtn
-          title="Add to diary"
-          handlePress={addToDiary}
-          isLoading={isAdding}
+          user={user}
+          image={params.result}
         />
       </View>
-    </View>
+    </ScrollView>
   )
 }
 
@@ -112,7 +109,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   formContainer2: {
-    height: '40%',
+    height: '30%',
     width: '100%',
     padding: 16,
     backgroundColor: '#4a5b4c',

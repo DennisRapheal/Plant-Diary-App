@@ -1,14 +1,11 @@
-import { View, Text, TextInput, Button, Image, TouchableOpacity, Switch, StyleSheet, ScrollView } from 'react-native'
-import { useRouter } from 'expo-router';
+import { View, Text, Alert, StyleSheet, ScrollView } from 'react-native'
+
 import { useState } from 'react'
 import AddDiaryBtn from '../../components/AddDiaryBtn';
 import * as ImagePicker from 'expo-image-picker';
 import UplaodImgBlock from '../../components/UplaodImgBlock';
 import DiarySettings from '../../components/DiarySettings';
 import React from 'react';
-import upload from 'lib/storage';
-import { setDoc, doc, collection, addDoc } from 'firebase/firestore';
-import { db } from 'lib/firebase';
 import { useGlobalContext } from 'context/GlobalProvider';
 import PlantInfo from 'app/(diarySetting)/[diarySettingId]';
 
@@ -16,36 +13,15 @@ import PlantInfo from 'app/(diarySetting)/[diarySettingId]';
 const create = () => {
   const [image, setImage] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [plantName, setPlantName] = useState("");
+  const [plantType, setPlantType] = useState("");
+  const [wateringFrequency, setPlantWater] = useState("");
+  const [reminder, setReminder] = useState("");
 
   const { user } = useGlobalContext()
 
   const [pressed, setIsPressed] = useState(false);
-  const router = useRouter();
-  const addToDiary = async () => {
-// store to data base
-    setIsPressed(true)
-    router.push("/home")
-    console.log(image)
 
-    if(!image){
-      console.log('no image available')
-      return 
-    }
-
-    const imgUrl = await upload(image)
-
-    console.log(imgUrl)
-
-    await addDoc(collection(db, "diaries"), {
-      uid: user.id,
-      createdAt: Date.now(),
-      plantName: plantName,
-      plantType: plantType,
-      wateringFrequency: wateringFrequency,
-      waterReminder: reminder,
-      startingImage: imgUrl,
-    })
-  };  
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -56,8 +32,9 @@ const create = () => {
     });
 
     if (!result.canceled) {
-      await setImage(result.assets[0].uri);
-      console.log(image)
+      setImage(result.assets[0].uri);
+    } else {
+      Alert.alert('Oops...', 'Please upload an image again')
     }
   };
 
@@ -74,12 +51,8 @@ const create = () => {
           identifyPlantName=""
           identifyPlantType=""
           identifyWater=""
-          btnPressed={pressed}
-        />
-        <AddDiaryBtn
-          title="Add to diary"
-          handlePress={addToDiary}
-          isLoading={isAdding}
+          user={user}
+          image={image}
         />
       </View>
     </ScrollView>

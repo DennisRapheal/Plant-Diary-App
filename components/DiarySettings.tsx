@@ -1,41 +1,52 @@
 import { StyleSheet, Text, View, TextInput, Switch} from 'react-native'
 import { useEffect, useState } from 'react';
+import { useRouter } from 'expo-router';
+import AddDiaryBtn from './AddDiaryBtn';
 import Slider from '@react-native-community/slider'; 
-import React from 'react'
+import React from 'react'; 
+import upload from 'lib/storage';
+import { useRoute } from '@react-navigation/native';
+import { setDoc, doc, collection, addDoc } from 'firebase/firestore';
+import { db } from 'lib/firebase';
 
-const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, btnPressed}) => {
+const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, user, image}) => {
   const [plantName, setPlantName] = useState('');
   const [plantType, setPlantType] = useState('');
   const [wateringFrequency, setWateringFrequency] = useState(0);
   const [reminder, setReminder] = useState(false);
-  useEffect(() => {
-    if(btnPressed){
-      // add to bd
-      console.log('add a diary')
-    }
-  }, [btnPressed])
+  const [isAdding, setIsAdding] = useState(false);
+  const router = useRouter()
+  const addToDiary = async () => {
+    
+    // console.log(image)
+    const imgUrl = await upload(image)
+    console.log(imgUrl)
+    
+    await addDoc(collection(db, "diaries"), {
+      uid: user.id,
+      createdAt: Date.now(),
+      plantName: plantName,
+      plantType: plantType,
+      wateringFrequency: wateringFrequency,
+      waterReminder: reminder,
+      startingImage: imgUrl,
+    })
 
-    // useEffect(() => {
-    //     if(identifyPlantName != ""){
-    //         setPlantName(identifyPlantName);
-    //     }
-    //     if(identifyPlantType != ""){
-    //         setPlantType(identifyPlantType);
-    //     }
-    //     if(identifyWater != ""){
-    //         setWateringFrequency(identifyWater);
-    //     }
-    // }, [identifyPlantName, identifyPlantType, identifyWater]);
+    // store to data base
+    router.replace('/home')
+  };  
 
-    if(identifyPlantName != ""){
-        setPlantName(identifyPlantName);
-    }
-    if(identifyPlantType != ""){
-        setPlantType(identifyPlantType);
-    }
-    if(identifyWater != ""){
-        setWateringFrequency(identifyWater);
-    }
+    useEffect(() => {
+        if(identifyPlantName != ""){
+            setPlantName(identifyPlantName);
+        }
+        if(identifyPlantType != ""){
+            setPlantType(identifyPlantType);
+        }
+        if(identifyWater != ""){
+            setWateringFrequency(identifyWater);
+        }
+    }, [identifyPlantName, identifyPlantType, identifyWater]);
 
   return (
     <>
@@ -70,6 +81,11 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, btn
         <Text className="text-white">Watering reminder:</Text>
         <Switch value={reminder} onValueChange={setReminder} />
       </View>
+      <AddDiaryBtn
+          title="Add to diary"
+          handlePress={addToDiary}
+          isLoading={isAdding}
+        />
     </>
   )
 }
@@ -79,7 +95,7 @@ export default DiarySettings
 const styles = StyleSheet.create({
     input: {
         height: 40,
-        borderColor: '#ccc',
+        borderColor: '#fff',
         borderWidth: 1,
         borderRadius: 8,
         paddingHorizontal: 8,
