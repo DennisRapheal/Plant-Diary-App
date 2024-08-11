@@ -46,9 +46,9 @@ const DiarySetting = ({addToDiary, btntitle}) => {
             <Switch value={reminder} onValueChange={setReminder} />
         </View>
         <AddDiaryBtn
-        title={btntitle}
-        handlePress={addToDiary}
-        isLoading={isAdding}
+          title={btntitle}
+          handlePress={addToDiary}
+          isLoading={isAdding}
         />
         
     </View>

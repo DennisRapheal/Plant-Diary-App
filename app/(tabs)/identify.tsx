@@ -1,5 +1,6 @@
 import { View, Text, TextInput, Button, Image, Switch, Alert, StyleSheet } from 'react-native'
 import { useState, useEffect} from 'react'
+
 import React from 'react'
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
@@ -12,12 +13,11 @@ const identify = () => {
   // deal with btn
   const [isAdding, setIsAdding] = useState(false);
   const [pressed, setIsPressed] = useState(false);
-
   const clickIdentify = () => {
     if (image != null) {
       router.push({
         pathname: '/(test)/[result]',
-        params: { result: image },
+        params: { result: image},
       });
     } else {
       Alert.alert('Oops...', 'No image is selected. ')
@@ -54,7 +54,6 @@ const identify = () => {
           title="identify the plant!"
           handlePress={clickIdentify}
           isLoading={isAdding}
-          
         />
       </View>
     </View>

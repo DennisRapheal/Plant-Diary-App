@@ -5,7 +5,7 @@ import * as FileSystem from 'expo-file-system';
 const ApiKey = '2b10sL5sTH5tnq7zhTwNVCvYge';
 
 // imagePath should be like: images.plant !!!!!
-const useFetch = async (imagePath) => {
+const test = async (imagePath) => {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -75,4 +75,4 @@ const useFetch = async (imagePath) => {
   return { data, isLoading, error }
 };
 
-export default useFetch;
+export default test;

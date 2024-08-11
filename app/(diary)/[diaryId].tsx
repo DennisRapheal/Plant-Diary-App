@@ -1,13 +1,19 @@
 import { Link, useLocalSearchParams } from 'expo-router';
+import useDiary from 'hooks/useDiary';
+import useDiaryCard from 'hooks/useDiaryCard';
 import React, { useState, useRef } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Switch, Dimensions, Animated, TouchableOpacity } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import { setDoc, doc, collection, addDoc } from 'firebase/firestore';
+import { db } from 'lib/firebase';
+import { useGlobalContext } from 'context/GlobalProvider';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = 250;
 const SPACING = 10;
 const ITEM_WIDTH = CARD_WIDTH + SPACING * 2;
 const EMPTY_ITEM_WIDTH = (width - ITEM_WIDTH) / 2;
-
+const id = useLocalSearchParams()
 
 const Card = ({ item, index, scrollX }) => {
   const inputRange = [
@@ -26,7 +32,6 @@ const Card = ({ item, index, scrollX }) => {
     outputRange: [0.5, 1, 0.5],
   });
 
-  const id = useLocalSearchParams()
   console.log(id)
 
   return (
@@ -55,11 +60,25 @@ export default function App() {
     const [switchValue, setSwitch] = useState(false);
     const scrollX = useRef(new Animated.Value(0)).current;
     const [activeIndex, setActiveIndex] = useState(0);
-  
+    const {diaryCards, loading, error} = useDiaryCard(id); 
     const handleSwitch = (e) => {
       setSwitch(e);
     };
+
+    // const addCard = async (date, nextDate, height, note) => {
+    //   await addDoc(collection(db, "diaries"), {
+    //     diaryId: id, 
+    //     createdAt: Date.now(),
+    //     date:
+    //     nextDate: 
+    //     height: 
+    //     note: 
+    //   })
   
+    //   // store to data base
+    //   router.replace('/home')
+    // }
+
     const data = [
       { key: 'empty-left' },
       { key: '1', date: '2024 8/5', nextDate: '2024 8/15', height: 10, note: 'blah blah blah blah.' },

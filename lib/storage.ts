@@ -7,8 +7,6 @@ const upload = async (file) => {
     const blob = await response.blob();
 
     return new Promise((resolve, reject) => {
-
-
         const date = new Date()
         const storageRef = ref(storage, `images/${date+file.name}`);
 
