@@ -14,9 +14,8 @@ import { useUserStore } from 'lib/userStore';
 
 const App = () => {
 
-    const { currentUser, isLoading } = useUserStore()
-
-    if(!isLoading && currentUser) return <Redirect href="/home"/>
+    const { user, isLogged } = useGlobalContext()
+    if( isLogged ) return <Redirect href="/home"/>
     
     return (
         <SafeAreaView className="bg-primary h-full">

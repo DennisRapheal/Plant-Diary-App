@@ -17,7 +17,9 @@ const home = () => {
   const handleLogout = (e) => {
     e.preventDefault(); 
     auth.signOut()
-    router.replace('/')
+    .then(() => {
+      router.replace('/')
+    })
   };
 
   const { user, Loading } = useGlobalContext()

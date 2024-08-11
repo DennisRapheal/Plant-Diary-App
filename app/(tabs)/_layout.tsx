@@ -11,8 +11,6 @@ const TabIcon = ({ icon, color, name, focused }) => {
 
   const { user, Loading, isLogged } = useGlobalContext()
 
-  if (!isLogged ) return <Redirect href='/index'/>
-
   return (
     <View className="flex items-center justify-center gap1">
       <Image
