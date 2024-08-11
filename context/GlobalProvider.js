@@ -13,8 +13,9 @@ const GlobalProvider = ({ children }) => {
 
   const fetchUserInfo = async (uid) => {
     if (!uid) {
-      setIsLoading(false);
-      setUser(null);
+      setIsLoading(false)
+      setUser(null)
+      setIsLogged(false)
       return;
     }
     try {
@@ -30,6 +31,7 @@ const GlobalProvider = ({ children }) => {
     } catch (err) {
       console.log(err);
       setUser(null);
+      setIsLogged(false)
     } finally {
       setIsLoading(false);
     }

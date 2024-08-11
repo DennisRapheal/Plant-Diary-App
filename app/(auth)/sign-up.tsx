@@ -27,7 +27,6 @@ const SignUp = () => {
             Alert.alert('Error', 'Please complete all the fields')
         }
         const { username, email, password } = form
-        console.log(username, email, password)
         setIsSubmitting(true);
 
         try {

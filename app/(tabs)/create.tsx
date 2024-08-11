@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, Image, TouchableOpacity, Switch, StyleSheet } from 'react-native'
+import { View, Text, TextInput, Button, Image, TouchableOpacity, Switch, StyleSheet, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router';
 import { useState } from 'react'
 import AddDiaryBtn from '../../components/AddDiaryBtn';
@@ -6,17 +6,45 @@ import * as ImagePicker from 'expo-image-picker';
 import UplaodImgBlock from '../../components/UplaodImgBlock';
 import DiarySettings from '../../components/DiarySettings';
 import React from 'react';
+import upload from 'lib/storage';
+import { setDoc, doc, collection, addDoc } from 'firebase/firestore';
+import { db } from 'lib/firebase';
+import { useGlobalContext } from 'context/GlobalProvider';
+import PlantInfo from 'app/(diarySetting)/[diarySettingId]';
 
 
 const create = () => {
   const [image, setImage] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+
+  const { user } = useGlobalContext()
+
   const [pressed, setIsPressed] = useState(false);
   const router = useRouter();
   const addToDiary = async () => {
-    // store to data base
+// store to data base
     setIsPressed(true)
     router.push("/home")
+    console.log(image)
+
+    if(!image){
+      console.log('no image available')
+      return 
+    }
+
+    const imgUrl = await upload(image)
+
+    console.log(imgUrl)
+
+    await addDoc(collection(db, "diaries"), {
+      uid: user.id,
+      createdAt: Date.now(),
+      plantName: plantName,
+      plantType: plantType,
+      wateringFrequency: wateringFrequency,
+      waterReminder: reminder,
+      startingImage: imgUrl,
+    })
   };  
 
   const pickImage = async () => {
@@ -28,12 +56,13 @@ const create = () => {
     });
 
     if (!result.canceled) {
-      setImage(result.uri);
+      await setImage(result.assets[0].uri);
+      console.log(image)
     }
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       {/* // upload image  */}
       <UplaodImgBlock 
         image={image}
@@ -53,7 +82,7 @@ const create = () => {
           isLoading={isAdding}
         />
       </View>
-    </View>
+    </ScrollView>
   )
 }
 
