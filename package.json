@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
+    "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-community/slider": "^4.5.2",
     "@react-native-firebase/app": "^20.3.0",
     "@react-navigation/native": "^6.0.2",
@@ -26,13 +27,14 @@
     "expo-constants": "~16.0.2",
     "expo-file-system": "~17.0.1",
     "expo-font": "~12.0.9",
-    "expo-image-picker": "^15.0.7",
+    "expo-image-picker": "~15.0.7",
     "expo-linking": "~6.3.1",
     "expo-router": "~3.5.21",
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
     "expo-web-browser": "~13.0.3",
+    "firebase": "^10.12.5",
     "fs": "^0.0.1-security",
     "nativewind": "^2.0.11",
     "react": "18.2.0",
@@ -46,10 +48,12 @@
     "react-native-screens": "3.31.1",
     "react-native-slider": "^0.11.0",
     "react-native-url-polyfill": "^2.0.0",
+    "react-native-vector-icons": "^10.1.0",
     "react-native-web": "~0.19.10",
     "rn-fetch-blob": "^0.12.0",
     "tailwindcss": "^3.3.2",
-    "tailwindcss-react-native": "^1.7.10"
+    "tailwindcss-react-native": "^1.7.10",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

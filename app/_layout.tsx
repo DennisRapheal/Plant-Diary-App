@@ -4,6 +4,9 @@ import { SplashScreen, Slot, Stack } from 'expo-router'
 import { useFonts } from 'expo-font'
 import { useEffect } from 'react'
 import GlobalProvider from '../context/GlobalProvider'
+import { useUserStore } from 'lib/userStore'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from 'lib/firebase'
 
 SplashScreen.preventAutoHideAsync();
 
@@ -31,7 +34,6 @@ const RootLayout = () => {
     if (!fontsLoaded && !error) {
         return null;
     }
-
     
     return (
         <GlobalProvider>
@@ -39,6 +41,9 @@ const RootLayout = () => {
                 <Stack.Screen name="index" options={{ headerShown: false}} />
                 <Stack.Screen name="(auth)" options={{ headerShown: false}} />
                 <Stack.Screen name="(tabs)" options={{ headerShown: false}} />
+                <Stack.Screen name="(diary)/[diaryId]" options={{ headerShown: false}} />
+                <Stack.Screen name="(diarySetting)/[diarySettingId]" options={{ headerShown: false}} />
+                <Stack.Screen name="(waterCard)/[wateringId]" options={{ headerShown: false}} />
                 <Stack.Screen name="(test)" options={{ headerShown: false}} />
             </Stack>
         </GlobalProvider>
@@ -47,11 +52,3 @@ const RootLayout = () => {
 
 export default RootLayout
 
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1, 
-//         backgroundColor: '#fff',
-//         alignItems: 'center',
-//         justifyContent: 'center', 
-//     },
-// });

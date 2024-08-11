@@ -1,6 +1,5 @@
 {
   "expo": {
-  
     "name": "plant_dev",
     "scheme": "plant_dev",
     "slug": "plant_dev",
@@ -16,7 +15,11 @@
     },
     "ios": {
       "supportsTablet": true, 
-      "package": "com.anjin.aora"
+      "package": "com.anjin.aora",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera.",
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photo library."
+    }
     },
     "android": {
       "adaptiveIcon": {

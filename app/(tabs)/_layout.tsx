@@ -1,11 +1,18 @@
 import { StatusBar } from "expo-status-bar";
-import { Redirect, Tabs } from "expo-router";
+import { Redirect, Stack, Tabs } from "expo-router";
 import { Image, Text, View } from "react-native";
 import React from "react";
 import { icons } from "../../constants";
-import { useGlobalContext } from "../../context/GlobalProvider";
+import { useGlobalContext } from "context/GlobalProvider";
+import React, { useEffect } from "react";
+import { useUserStore } from "lib/userStore";
 
 const TabIcon = ({ icon, color, name, focused }) => {
+
+  const { user, Loading, isLogged } = useGlobalContext()
+
+  if (!isLogged ) return <Redirect href='/index'/>
+
   return (
     <View className="flex items-center justify-center gap1">
       <Image
@@ -28,8 +35,7 @@ const TabIcon = ({ icon, color, name, focused }) => {
 const TabsLayout = () => {
   return (
     <>
-      <Tabs
-        // tabs styling
+        <Tabs
         screenOptions={{
           tabBarActiveTintColor: "#fff", // focus color
           tabBarInactiveTintColor: "#CDCDE0",
@@ -43,7 +49,6 @@ const TabsLayout = () => {
           },
         }}
       >
-        // create a route button for all pages
         <Tabs.Screen 
           name='home'
           options={{

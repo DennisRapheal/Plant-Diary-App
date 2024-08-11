@@ -1,25 +1,31 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native'
 import React from 'react'
 import { icons } from '../constants';
+import { Link, router } from 'expo-router';
 
 const DiaryCard = ({title, onDelete}) => {
+  const handlePress = () => {
+    router.push("/(diary)/1")
+  }
   return (
-    <View style={styles.card}>
-      <View style={styles.content}>
-        <Text>whould be image</Text>
-      </View>
-        <View style={styles.footer}>
-            <Text style={styles.title}>
-                {title}
-            </Text>
-                <TouchableOpacity onPress={onDelete}>
-                <Image
-                    source = {icons.trashcan}
-                    style={styles.icon}
-                />
-                </TouchableOpacity>
+    <Link href={'/(diary)/1' } asChild>
+      <TouchableOpacity style={styles.card} onPress = {() => {handlePress}}>
+        <View style={styles.content}>
+          <Text>whould be image</Text>
         </View>
-    </View>
+          <View style={styles.footer}>
+              <Text style={styles.title}>
+                  {title}
+              </Text>
+                  <TouchableOpacity onPress={onDelete}>
+                  <Image
+                      source = {icons.trashcan}
+                      style={styles.icon}
+                  />
+                  </TouchableOpacity>
+          </View>
+      </TouchableOpacity>
+    </Link>
   );
 };
 
