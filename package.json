@@ -35,6 +35,7 @@
     "expo-system-ui": "~3.0.7",
     "expo-web-browser": "~13.0.3",
     "firebase": "^10.12.5",
+    "form-data": "^4.0.0",
     "fs": "^0.0.1-security",
     "nativewind": "^2.0.11",
     "react": "18.2.0",

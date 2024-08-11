@@ -11,7 +11,7 @@ const identify = () => {
   const [image, setImage] = useState<string | null>(null);
   // deal with btn
   const [isAdding, setIsAdding] = useState(false);
-
+  const [pressed, setIsPressed] = useState(false);
 
   const clickIdentify = () => {
     if (image != null) {
@@ -46,6 +46,7 @@ const identify = () => {
         image={image}
         pickImage={pickImage}
         script={"pick an image to identify"}
+        btnPressed={pressed}
       />
 
       <View style={styles.formContainer2} >
@@ -53,6 +54,7 @@ const identify = () => {
           title="identify the plant!"
           handlePress={clickIdentify}
           isLoading={isAdding}
+          
         />
       </View>
     </View>

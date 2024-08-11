@@ -12,7 +12,13 @@ import DiarySettings from '../../components/DiarySettings';
 const result = () => {
   const params = useLocalSearchParams();
   // const [returnData, setReturnData]= useState(null);
-  const { data:returnData, isLoading, error} = useFetch(params.result);
+  
+  const [returnData, setReturnData] = useState(null)
+  const [isLoading, setIsLoading] = useState(null)
+  const [error, setError] = useState(null)
+  const { Data, Loading, err, fetching} = useFetch(params.result);
+      
+  
   const [isAdding, setIsAdding] = useState(false);
   // const [waitFetch, setWaitFetch] = useState(true);
   const [isPlant, setIsPlant] = useState(false);
@@ -20,37 +26,49 @@ const result = () => {
   const [plantType, setPlantType] = useState("");
   const [plantWater, setPlantWater] = useState("");
   const [plantDetail, setPlantDetail] = useState("");
+  const [pressed, setPressed] = useState(false);
 
+  // useEffect(() => {
+  //   if (returnData) {
+  //     console.log('Return Data:', returnData);
+  //     setIsPlant(returnData.result.is_plant.binary);
+  //     if(returnData.result.classification.suggestions.length > 0){
+  //       const suggestions = returnData.result.classification.suggestions[0].details;
+  //       setPlantName(suggestions.common_names);
+  //       setPlantType(suggestions.taxonomy?.genus);
+  //       setPlantWater(''); // Replace with actual logic if needed
+  //       setPlantDetail(suggestions.description?.value);
+  //     }else{
+  //       console.warn('No suggestions available.');
+  //     }
+  //   } else {
+  //     console.log('Return Data Not Fetched:', returnData);
+  //   }
+  // }, [returnData, isLoading]);
   useEffect(() => {
-    if (returnData) {
-      console.log('Return Data:', returnData);
-      setIsPlant(returnData.result.is_plant.binary);
-      if(returnData.result.classification.suggestions.length > 0){
-        const suggestions = returnData.result.classification.suggestions[0].details;
-        setPlantName(suggestions.common_names);
-        setPlantType(suggestions.taxonomy?.genus);
-        setPlantWater(''); // Replace with actual logic if needed
-        setPlantDetail(suggestions.description?.value);
-      }else{
-        console.warn('No suggestions available.');
-      }
-    } else {
-      console.log('Return Data Not Fetched:', returnData);
+    if (returnData==null || returnData=='undefined') {
+      fetching
+      setReturnData(Data)
+      setIsLoading(Loading)
+      setError(err)
+      console.log("ere", JSON.stringify(returnData))
+    }else{
+      console.log("YA!!", JSON.stringify(returnData))
     }
-  }, [returnData, isLoading]);
+  }, [returnData])
 
   const addToDiary = () => {
-
+    setPressed(true)
   }
   return (
     <View style={styles.container}>
       <>
-        { !isLoading ? (
+        { false? (
           <ActivityIndicator size="large" />
         ) : (
-          <PlantInfo
-            isPlant={isPlant}
-            details={plantDetail}
+          <PlantInfo 
+           isPlant={true}
+           details= {returnData}
           />
         )}
       </>
@@ -59,6 +77,7 @@ const result = () => {
           identifyPlantName={plantName}
           identifyPlantType={plantType}
           identifyWater={plantWater}
+          btnPressed={pressed}
         />
         <AddDiaryBtn
           title="Add to diary"

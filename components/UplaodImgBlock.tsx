@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native'
 import React from 'react'
 
 const UplaodImgBlock = ({
-    image, pickImage, script
+    image, pickImage, script, btnPressed
   }) => {
 
   return (

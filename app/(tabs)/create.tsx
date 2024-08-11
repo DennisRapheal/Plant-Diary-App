@@ -1,5 +1,5 @@
 import { View, Text, TextInput, Button, Image, TouchableOpacity, Switch, StyleSheet } from 'react-native'
-import Slider from '@react-native-community/slider'; 
+import { useRouter } from 'expo-router';
 import { useState } from 'react'
 import AddDiaryBtn from '../../components/AddDiaryBtn';
 import * as ImagePicker from 'expo-image-picker';
@@ -11,9 +11,12 @@ import React from 'react';
 const create = () => {
   const [image, setImage] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
-  
+  const [pressed, setIsPressed] = useState(false);
+  const router = useRouter();
   const addToDiary = async () => {
-    
+    // store to data base
+    setIsPressed(true)
+    router.push("/home")
   };  
 
   const pickImage = async () => {
@@ -42,6 +45,7 @@ const create = () => {
           identifyPlantName=""
           identifyPlantType=""
           identifyWater=""
+          btnPressed={pressed}
         />
         <AddDiaryBtn
           title="Add to diary"
