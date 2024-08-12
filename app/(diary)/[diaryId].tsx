@@ -1,4 +1,4 @@
-import { Link, router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
+import { Link, router, useFocusEffect, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 import React, { useState, useRef, useEffect } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Switch, Dimensions, Animated, TouchableOpacity } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
@@ -61,6 +61,7 @@ export default function App() {
     const scrollX = useRef(new Animated.Value(0)).current;
     const [activeIndex, setActiveIndex] = useState(0);
     const [diary, setDiary] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
     const handleSwitch = (e) => {
       setSwitch(e);
     };
@@ -85,14 +86,30 @@ export default function App() {
     const { user } = useGlobalContext()
 
     const fetch_data = async() => {
-      const diaryRef = doc(db, "diaries", diaryId.toString())
-      const diary = (await getDoc(diaryRef)).data()
-      setDiary(diary)
+      try{
+        const diaryRef = doc(db, "diaries", diaryId.toString())
+        const diary = (await getDoc(diaryRef)).data()
+        setDiary(diary)
+      }catch(err){
+        console.log(err)
+      }
     }
-    useEffect(() => {
-      fetch_data()
-      console.log(diary)
-    }, [])
+
+
+
+    useFocusEffect(
+      React.useCallback(() => {
+        setIsLoading(true)
+        try{
+          fetch_data()
+          console.log(diary)
+        }catch(e){
+          console.log(e.message)
+        }finally{
+          setIsLoading(false)
+        }
+      }, [])
+    );
   
     return (
       <SafeAreaView style={styles.container}>
@@ -129,20 +146,17 @@ export default function App() {
             ))}
           </View>
 
-
-
-
-          <View style={styles.infoCard}>
-            <Text style={styles.plantName}>{diary.plantName}</Text>
+          { <View style={styles.infoCard}>
+            <Text style={styles.PlantName}>{diary?.plantName}</Text>
             <Text style={styles.days}>23 Days</Text>
-            <Text style={styles.plantType}>{diary.plantType}</Text>
-            <Text style={styles.wateringInfo}> {`Day left to water: ${diary.createdAt} days`}</Text>
+            <Text style={styles.plantType}>{diary?.plantType}</Text>
+            <Text style={styles.wateringInfo}> {`Day left to water: ${diary?.createdAt} days`}</Text>
             <View style={styles.reminderRow}>
               <Text style={styles.reminderText}>Watering Reminder:</Text>
               <Switch value={switchValue} onValueChange={handleSwitch} />
             </View>
             <AddDiaryBtn title = "add watering record" handlePress={() => {router.push("/(waterCard)/1")}} isLoading={false}/>
-          </View>
+          </View> }
 
         </View>
     </SafeAreaView>
@@ -213,7 +227,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         alignSelf: 'center',
     },
-    plantName: {
+    PlantName: {
         fontSize: 24,
         color: '#6B7969',
         marginBottom: 10,

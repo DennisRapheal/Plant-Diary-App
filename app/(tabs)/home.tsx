@@ -53,10 +53,6 @@ const home = () => {
     }, [])
   );
 
-  // useEffect(() => {
-  //     getData()
-  // }, []);
-
   const handleLogout = (e) => {
     e.preventDefault(); 
     auth.signOut()
