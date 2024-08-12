@@ -1,7 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { Redirect, Stack, Tabs } from "expo-router";
 import { Image, Text, View } from "react-native";
-
 import { icons } from "../../constants";
 import { useGlobalContext } from "context/GlobalProvider";
 import React, { useEffect } from "react";

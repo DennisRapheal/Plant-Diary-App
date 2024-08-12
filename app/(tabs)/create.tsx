@@ -1,49 +1,27 @@
-import { View, Text, TextInput, Button, Image, TouchableOpacity, Switch, StyleSheet, ScrollView } from 'react-native'
-import Slider from '@react-native-community/slider'; 
+import { View, Text, Alert, StyleSheet, ScrollView } from 'react-native'
+
 import { useState } from 'react'
 import AddDiaryBtn from '../../components/AddDiaryBtn';
 import * as ImagePicker from 'expo-image-picker';
 import UplaodImgBlock from '../../components/UplaodImgBlock';
+import DiarySettings from '../../components/DiarySettings';
 import React from 'react';
-import upload from 'lib/storage';
-import { setDoc, doc, collection, addDoc } from 'firebase/firestore';
-import { db } from 'lib/firebase';
 import { useGlobalContext } from 'context/GlobalProvider';
 import PlantInfo from 'app/(diarySetting)/[diarySettingId]';
 
+
 const create = () => {
   const [image, setImage] = useState<string | null>(null);
-  const [plantName, setPlantName] = useState('');
-  const [plantType, setPlantType] = useState('');
-  const [wateringFrequency, setWateringFrequency] = useState(0);
-  const [reminder, setReminder] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [plantName, setPlantName] = useState("");
+  const [plantType, setPlantType] = useState("");
+  const [wateringFrequency, setPlantWater] = useState("");
+  const [reminder, setReminder] = useState("");
 
   const { user } = useGlobalContext()
 
-  const addToDiary = async () => {
+  const [pressed, setIsPressed] = useState(false);
 
-    console.log(image)
-
-    if(!image){
-      console.log('no image available')
-      return 
-    }
-
-    const imgUrl = await upload(image)
-
-    console.log(imgUrl)
-
-    await addDoc(collection(db, "diaries"), {
-      uid: user.id,
-      createdAt: Date.now(),
-      plantName: plantName,
-      plantType: plantType,
-      wateringFrequency: wateringFrequency,
-      waterReminder: reminder,
-      startingImage: imgUrl,
-    })
-  };  
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -54,59 +32,29 @@ const create = () => {
     });
 
     if (!result.canceled) {
-      await setImage(result.assets[0].uri);
-      console.log(image)
+      setImage(result.assets[0].uri);
+    } else {
+      Alert.alert('Oops...', 'Please upload an image again')
     }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* // upload image  */}
-      
       <UplaodImgBlock 
         image={image}
         pickImage={pickImage}
         script={"uplaod plant image"}
+        btnPressed={pressed}
       />
-
       <View style={styles.formContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Name your plant"
-          value={plantName}
-          onChangeText={setPlantName}
+        <DiarySettings
+          identifyPlantName=""
+          identifyPlantType=""
+          identifyWater=""
+          user={user}
+          image={image}
         />
-        <Text className="text-white">
-          What's Your Plant? 
-        </Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter the type of your plant"
-          value={plantType}
-          onChangeText={setPlantType}
-        />
-        <View style={styles.sliderContainer}>
-          <Text className="text-white">How often do you want to water it? (days)</Text>
-          <Slider
-            style={styles.slider}
-            minimumValue={0}
-            maximumValue={30}
-            step={1}
-            value={wateringFrequency}
-            onValueChange={setWateringFrequency}
-          />
-          <Text className="text-white">{wateringFrequency} days</Text>
-        </View>
-        <View style={styles.switchContainer}>
-          <Text className="text-white">Watering reminder:</Text>
-          <Switch value={reminder} onValueChange={setReminder} />
-        </View>
-        <AddDiaryBtn
-          title="Add to diary"
-          handlePress={addToDiary}
-          isLoading={isAdding}
-        />
-        
       </View>
     </ScrollView>
   )
@@ -148,27 +96,5 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#4a5b4c',
     borderRadius: 10,
-  },
-  input: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    marginBottom: 16,
-    backgroundColor: '#ddd',
-  },
-  sliderContainer: {
-    marginBottom: 16,
-  },
-  slider: {
-    width: '100%',
-    height: 40,
-  },
-  switchContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
   },
 })

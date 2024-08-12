@@ -1,31 +1,35 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, Image, TouchableOpacity, TouchableWithoutFeedback} from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { icons } from '../constants';
 import { Link, router } from 'expo-router';
+import { deleteDoc, getDocs, collection, query, doc} from 'firebase/firestore';
+import { db } from 'lib/firebase';
 
-const DiaryCard = ({title, onDelete}) => {
-  const handlePress = () => {
-    router.push("/(diary)/1")
-  }
+const handlePress = async() => {
+  router.push("/(diary)/1")
+  console.log('ererer')
+}
+const DiaryCard = ({title, image, docid, onDelete}) => {
+  
   return (
-    <Link href={'/(diary)/1' } asChild>
-      <TouchableOpacity style={styles.card} onPress = {() => {handlePress}}>
-        <View style={styles.content}>
-          <Text>whould be image</Text>
+      <TouchableOpacity style={styles.card} onPress = {async () => (router.push(`/(diary)/${docid}`))}>
+        <View style={styles.content} >
+          <Image 
+            source={{uri: image}}
+          />
         </View>
-          <View style={styles.footer}>
-              <Text style={styles.title}>
-                  {title}
-              </Text>
-                  <TouchableOpacity onPress={onDelete}>
-                  <Image
-                      source = {icons.trashcan}
-                      style={styles.icon}
-                  />
-                  </TouchableOpacity>
-          </View>
+        <View style={styles.footer}>
+          <Text style={styles.title}>
+              {title}
+          </Text>
+          <TouchableOpacity onPress={onDelete}>
+            <Image
+                source = {icons.trashcan}
+                style={styles.icon}
+            />
+          </TouchableOpacity>
+        </View>
       </TouchableOpacity>
-    </Link>
   );
 };
 
