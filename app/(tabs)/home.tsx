@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, FlatList, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState }, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack } from 'expo-router';
 import DiaryCard from '../../components/DiaryCard';
@@ -11,42 +11,53 @@ import ProfileBtn from "../../components/ProfileBtn";
 import { useUserStore } from 'lib/userStore';
 import { db } from 'lib/firebase';
 import { deleteDoc, getDocs, collection, query, where, doc} from 'firebase/firestore';
+import { db } from 'lib/firebase';
+import { deleteDoc, getDocs, collection, query, where, doc} from 'firebase/firestore';
 import { auth } from 'lib/firebase';
 import { useGlobalContext } from 'context/GlobalProvider';
-// import useDiary from '../../hooks/useDiary';
+import { useFocusEffect } from '@react-navigation/native';
 
-const onDelete = async (docId) => {
-  try {
-    await deleteDoc(doc(db, "diaries", docId));
-    console.log('Document deleted successfully');
-    // Refresh the diaries list after deletion
-    router.replace('/home')
-  } catch (err) {
-    console.error('Error deleting document:', err);
-  }
-}
 
 const home = () => {
+
   const [diaries, setDiaries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { user, Loading } = useGlobalContext();
-  useEffect(() => {
+
+  const onDelete = async (docId) => {
+    try {
+      setDiaries((prevDiaries) => prevDiaries.filter(diary => diary.id !== docId));
+      await deleteDoc(doc(db, "diaries", docId));
+      console.log('Document deleted successfully');
+   } catch (err) {
+      console.error('Error deleting document:', err);
+    }
+  }
+
   const getData = async() => {
-      try {
-          setLoading(true); 
-          const q = query(collection(db, "diaries"), where("uid", "==", user.id));
-          const querySnapshot = await getDocs(q);
-          const documents = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          setDiaries(documents);
-      } catch (err) {
-          setError(err as Error);
-      } finally {
-          setLoading(false);
-      }
-  };
-      getData(); 
-  }, []);
+    try {
+        setLoading(true); 
+        const q = query(collection(db, "diaries"), where("uid", "==", user.id));
+        const querySnapshot = await getDocs(q);
+        const documents = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setDiaries(documents);
+    } catch (err) {
+        setError(err as Error);
+    } finally {
+        setLoading(false);
+    }
+  }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getData();
+    }, [])
+  );
+
+  // useEffect(() => {
+  //     getData()
+  // }, []);
 
   const handleLogout = (e) => {
     e.preventDefault(); 

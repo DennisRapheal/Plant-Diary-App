@@ -1,7 +1,11 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, TouchableWithoutFeedback} from 'react-native'
 import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View, Image, TouchableOpacity, TouchableWithoutFeedback} from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { icons } from '../constants';
 import { Link, router } from 'expo-router';
+import { deleteDoc, getDocs, collection, query, doc} from 'firebase/firestore';
+import { db } from 'lib/firebase';
 import { deleteDoc, getDocs, collection, query, doc} from 'firebase/firestore';
 import { db } from 'lib/firebase';
 

@@ -1,11 +1,14 @@
-import { Link, useLocalSearchParams } from 'expo-router';
-
-import React, { useState, useRef } from 'react';
+import { Link, router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
+import React, { useState, useRef, useEffect } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Switch, Dimensions, Animated, TouchableOpacity } from 'react-native';
-import { useRoute } from '@react-navigation/native';
-import { setDoc, doc, collection, addDoc } from 'firebase/firestore';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { setDoc, doc, collection, addDoc, getDoc } from 'firebase/firestore';
 import { db } from 'lib/firebase';
 import { useGlobalContext } from 'context/GlobalProvider';
+import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
+import AddDiaryBtn from 'components/AddDiaryBtn';
+import DiarySettings from '../../components/DiarySettings';
+import { isLoading } from 'expo-font';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = 250;
@@ -59,23 +62,13 @@ export default function App() {
     const [switchValue, setSwitch] = useState(false);
     const scrollX = useRef(new Animated.Value(0)).current;
     const [activeIndex, setActiveIndex] = useState(0);
+    const [diary, setDiary] = useState(null)
     const handleSwitch = (e) => {
       setSwitch(e);
     };
 
-    // const addCard = async (date, nextDate, height, note) => {
-    //   await addDoc(collection(db, "diaries"), {
-    //     diaryId: id, 
-    //     createdAt: Date.now(),
-    //     date:
-    //     nextDate: 
-    //     height: 
-    //     note: 
-    //   })
-  
-    //   // store to data base
-    //   router.replace('/home')
-    // }
+
+    const { diaryId } = useGlobalSearchParams()
 
     const data = [
       { key: 'empty-left' },
@@ -90,51 +83,70 @@ export default function App() {
       const index = Math.round(scrollPosition / ITEM_WIDTH);
       setActiveIndex(index);
     };
+
+    const { user } = useGlobalContext()
+
+    const fetch_data = async() => {
+      const diaryRef = doc(db, "diaries", diaryId.toString())
+      const diary = (await getDoc(diaryRef)).data()
+      setDiary(diary)
+    }
+    useEffect(() => {
+      fetch_data()
+      console.log(diary)
+    }, [])
   
     return (
       <SafeAreaView style={styles.container}>
-        <Animated.FlatList
-          data={data}
-          renderItem={({ item, index }) => {
-            if (!item.date) {
-              return <View style={{ width: EMPTY_ITEM_WIDTH }} />;
-            }
-            return <Card item={item} index={index} scrollX={scrollX} />;
-          }}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={ITEM_WIDTH}
-          decelerationRate="fast"
-          bounces={false}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-            { useNativeDriver: true, listener: handleScroll }
-          )}
-          scrollEventThrottle={16}
-        />
-        <View style={styles.pagination}>
-          {data.slice(1, -1).map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.paginationDot,
-                index === activeIndex && styles.paginationDotActive,
-              ]}
-            />
-          ))}
-        </View>
-            <View style={styles.infoCard}>
-                <Text style={styles.plantName}>Plant Name</Text>
-                <Text style={styles.days}>23 Days</Text>
-                <Text style={styles.plantType}>Rose</Text>
-                <Text style={styles.wateringInfo}>Day left to water: 7 days</Text>
-            <View style={styles.reminderRow}>
-            <Text style={styles.reminderText}>Watering Reminder:</Text>
-            <Switch value={switchValue} onValueChange={handleSwitch} />
-        </View>
-            <View style={styles.reminderBar}></View>
-        </View>
+        <View className='flex-1'>
+          <Animated.FlatList
+            data={data}
+            renderItem={({ item, index }) => {
+              if (!item.date) {
+                return <View style={{ width: EMPTY_ITEM_WIDTH }} />;
+              }
+              return <Card item={item} index={index} scrollX={scrollX} />;
+            }}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={ITEM_WIDTH}
+            decelerationRate="fast"
+            bounces={false}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+              { useNativeDriver: true, listener: handleScroll }
+            )}
+            scrollEventThrottle={16}
+          />
 
+          <View style={styles.pagination}>
+            {data.slice(1, -1).map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.paginationDot,
+                  index === activeIndex && styles.paginationDotActive,
+                ]}
+              />
+            ))}
+          </View>
+
+
+
+
+          <View style={styles.infoCard}>
+            <Text style={styles.plantName}>{diary.plantName}</Text>
+            <Text style={styles.days}>23 Days</Text>
+            <Text style={styles.plantType}>{diary.plantType}</Text>
+            <Text style={styles.wateringInfo}> {`Day left to water: ${diary.createdAt} days`}</Text>
+            <View style={styles.reminderRow}>
+              <Text style={styles.reminderText}>Watering Reminder:</Text>
+              <Switch value={switchValue} onValueChange={handleSwitch} />
+            </View>
+            <AddDiaryBtn title = "add watering record" handlePress={() => {router.push("/(waterCard)/1")}} isLoading={false}/>
+          </View>
+
+        </View>
     </SafeAreaView>
   );
 }

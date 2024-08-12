@@ -45,6 +45,7 @@ const create = () => {
         image={image}
         pickImage={pickImage}
         script={"uplaod plant image"}
+        btnPressed={pressed}
       />
       <View style={styles.formContainer}>
         <DiarySettings

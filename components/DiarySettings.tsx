@@ -2,7 +2,14 @@ import { StyleSheet, Text, View, TextInput, Switch} from 'react-native'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import AddDiaryBtn from './AddDiaryBtn';
+import { useRouter } from 'expo-router';
+import AddDiaryBtn from './AddDiaryBtn';
 import Slider from '@react-native-community/slider'; 
+import React from 'react'; 
+import upload from 'lib/storage';
+import { useRoute } from '@react-navigation/native';
+import { setDoc, doc, collection, addDoc } from 'firebase/firestore';
+import { db } from 'lib/firebase';
 import React from 'react'; 
 import upload from 'lib/storage';
 import { useRoute } from '@react-navigation/native';
@@ -17,7 +24,6 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
   const [isAdding, setIsAdding] = useState(false);
   const router = useRouter()
   const addToDiary = async () => {
-    
     // console.log(image)
     const imgUrl = await upload(image)
     console.log(imgUrl)
@@ -30,9 +36,9 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
       wateringFrequency: wateringFrequency,
       waterReminder: reminder,
       startingImage: imgUrl,
+      wateringRecords: [],
     })
 
-    // store to data base
     router.replace('/home')
   };  
 
@@ -81,6 +87,11 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
         <Text className="text-white">Watering reminder:</Text>
         <Switch value={reminder} onValueChange={setReminder} />
       </View>
+      <AddDiaryBtn
+          title="Add to diary"
+          handlePress={addToDiary}
+          isLoading={isAdding}
+        />
       <AddDiaryBtn
           title="Add to diary"
           handlePress={addToDiary}
