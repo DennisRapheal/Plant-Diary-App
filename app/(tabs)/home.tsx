@@ -11,8 +11,6 @@ import ProfileBtn from "../../components/ProfileBtn";
 import { useUserStore } from 'lib/userStore';
 import { db } from 'lib/firebase';
 import { deleteDoc, getDocs, collection, query, where, doc} from 'firebase/firestore';
-import { db } from 'lib/firebase';
-import { deleteDoc, getDocs, collection, query, where, doc} from 'firebase/firestore';
 import { auth } from 'lib/firebase';
 import { useGlobalContext } from 'context/GlobalProvider';
 import { useFocusEffect } from '@react-navigation/native';
@@ -54,10 +52,6 @@ const home = () => {
       getData();
     }, [])
   );
-
-  // useEffect(() => {
-  //     getData()
-  // }, []);
 
   const handleLogout = (e) => {
     e.preventDefault(); 

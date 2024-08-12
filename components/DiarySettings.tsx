@@ -30,7 +30,7 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
     
     await addDoc(collection(db, "diaries"), {
       uid: user.id,
-      createdAt: Date.now(),
+      createdAt: Date.now().toString(),
       plantName: plantName,
       plantType: plantType,
       wateringFrequency: wateringFrequency,
