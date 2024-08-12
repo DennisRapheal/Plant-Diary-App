@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, FlatList, ScrollView } from 'react-native'
-import React, { useEffect, useState }, { useEffect, useState } from 'react'
+import React, { useEffect, useState }from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack } from 'expo-router';
 import DiaryCard from '../../components/DiaryCard';

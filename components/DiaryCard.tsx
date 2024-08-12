@@ -6,8 +6,6 @@ import { icons } from '../constants';
 import { Link, router } from 'expo-router';
 import { deleteDoc, getDocs, collection, query, doc} from 'firebase/firestore';
 import { db } from 'lib/firebase';
-import { deleteDoc, getDocs, collection, query, doc} from 'firebase/firestore';
-import { db } from 'lib/firebase';
 
 const handlePress = async() => {
   router.push("/(diary)/1")
