@@ -34,6 +34,28 @@ const Card = ({ item, index, scrollX }) => {
     outputRange: [0.5, 1, 0.5],
   });
 
+
+  if (item.type === 'settings') {
+    const { diaryIdString } = item.key
+    return (
+      <TouchableOpacity onPress={() => {router.push(`/(diarySetting)/${diaryIdString}`)}}>
+        <Animated.View
+          style={[
+            styles.card,
+            styles.settingsCard,
+            {
+              transform: [{ scale }],
+              opacity,
+            },
+          ]}
+        >
+          <Text style={styles.settingsTitle}>Diary Settings</Text>
+          {/* Add more settings options here */}
+        </Animated.View>
+      </TouchableOpacity>
+    );
+  }
+
   return (
     <Link href={`/(waterCard)/1`} asChild>
       <TouchableOpacity>
@@ -50,6 +72,7 @@ const Card = ({ item, index, scrollX }) => {
           <View style={styles.imagePlaceholder}></View>
           <Text style={styles.cardDetail}>Height: {item.height} cm</Text>
           <Text style={styles.cardDetail}>Note: {item.note}</Text>
+
         </Animated.View>
       </TouchableOpacity>
     </Link>
@@ -65,13 +88,13 @@ export default function App() {
     const handleSwitch = (e) => {
       setSwitch(e);
     };
-
-
     const { diaryId } = useGlobalSearchParams()
-
+    const diaryIdString = diaryId?.toString()
+    
     const data = [
       { key: 'empty-left' },
-      { key: '1', date: '2024 8/5', nextDate: '2024 8/15', height: 10, note: 'blah blah blah blah.' },
+      { key: {diaryIdString}, type: 'settings' },
+      { key: '1', date: '2024 8/5', nextDate: '2024 8/15', height: 10, note: 'blah blah blah blah.'},
       { key: '2', date: '2024 8/6', nextDate: '2024 8/16', height: 12, note: 'another note' },
       { key: '3', date: '2024 8/7', nextDate: '2024 8/17', height: 15, note: 'yet another note' },
       { key: 'empty-right' },
@@ -95,14 +118,12 @@ export default function App() {
       }
     }
 
-
-
     useFocusEffect(
       React.useCallback(() => {
         setIsLoading(true)
         try{
           fetch_data()
-          console.log(diary)
+          // console.log(diary)
         }catch(e){
           console.log(e.message)
         }finally{
@@ -117,7 +138,7 @@ export default function App() {
           <Animated.FlatList
             data={data}
             renderItem={({ item, index }) => {
-              if (!item.date) {
+              if (item.key === 'empty-left' || item.key === 'empty-right') {
                 return <View style={{ width: EMPTY_ITEM_WIDTH }} />;
               }
               return <Card item={item} index={index} scrollX={scrollX} />;
@@ -217,6 +238,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#6B7969',
         borderRadius: 5,
         marginHorizontal: 5,
+    },
+    settingsCard: {
+      backgroundColor: '#8A9A8E', // A slightly different shade for distinction
+      justifyContent: 'center',
+    },
+    settingsTitle: {
+      color: '#FFFFFF',
+      fontSize: 24,
+      fontWeight: 'bold',
     },
     infoCard: {
         width: '90%',

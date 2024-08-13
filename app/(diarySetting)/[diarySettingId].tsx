@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Switch, ScrollView } from 'react-native';
 import Slider from '@react-native-community/slider';
 import DiarySetting from 'components/DiarySetting';
+import { useLocalSearchParams } from 'expo-router';
 
 const PlantInfo = () => {
   const [plantName, setPlantName] = useState('');
   const [plantDetail, setPlantDetail] = useState('');
   const [wateringInterval, setWateringInterval] = useState(0);
   const [reminderEnabled, setReminderEnabled] = useState(false);
+
+  const { diarySettingId } = useLocalSearchParams()
+  console.log(diarySettingId)
 
   return (
     <ScrollView style={styles.container}>
