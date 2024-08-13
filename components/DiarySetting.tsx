@@ -1,31 +1,40 @@
 import { View, Text, TextInput, Button, Image, TouchableOpacity, Switch, StyleSheet } from 'react-native'
 import Slider from '@react-native-community/slider'; 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AddDiaryBtn from './AddDiaryBtn';
 import * as ImagePicker from 'expo-image-picker';
 import React from 'react';
 
 
-const DiarySetting = ({addToDiary, btntitle}) => {
-    const [plantName, setPlantName] = useState('');
-    const [plantType, setPlantType] = useState('');
-    const [wateringFrequency, setWateringFrequency] = useState(0);
-    const [reminder, setReminder] = useState(false);
+const DiarySetting = ({addToDiary, btntitle, diary, onSubmit}) => {
+
+    useEffect(() => {
+      setPlantName(diary?.plantName)
+      setPlantType(diary?.plantType)
+      setWateringFrequency(diary?.wateringFrequency)
+      setReminder(diary?.waterReminder)
+    }, [diary])
+
+    const [plantName, setPlantName] = useState(diary?.plantName);
+    const [plantType, setPlantType] = useState(diary?.plantType);
+    const [wateringFrequency, setWateringFrequency] = useState(diary?.wateringFrequency);
+    const [reminder, setReminder] = useState(diary?.waterReminder);
     const [isAdding, setIsAdding] = useState(false);
+
     return (
         <View style={styles.formContainer}>
             <TextInput
             style={styles.input}
-            placeholder="Name your plant"
+            placeholder=""
             value={plantName}
             onChangeText={setPlantName}
             />
         <Text className="text-white">
-        What's Your Plant? 
+        Description 
         </Text>
             <TextInput
             style={styles.input}
-            placeholder="Enter the type of your plant"
+            placeholder=""
             value={plantType}
             onChangeText={setPlantType}
             />
@@ -47,10 +56,9 @@ const DiarySetting = ({addToDiary, btntitle}) => {
         </View>
         <AddDiaryBtn
           title={btntitle}
-          handlePress={addToDiary}
+          handlePress={() => onSubmit(plantName, plantType, wateringFrequency, reminder)}
           isLoading={isAdding}
         />
-        
     </View>
   )
 }
@@ -93,6 +101,7 @@ const styles = StyleSheet.create({
       borderRadius: 10,
     },
     input: {
+      color: "#000000", 
       height: 40,
       borderColor: '#ccc',
       borderWidth: 1,

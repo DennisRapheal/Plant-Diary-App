@@ -46,7 +46,6 @@ const identify = () => {
         image={image}
         pickImage={pickImage}
         script={"pick an image to identify"}
-        btnPressed={pressed}
       />
 
       <View style={styles.formContainer2} >

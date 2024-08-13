@@ -1,14 +1,15 @@
 import { Link, router, useFocusEffect, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 import React, { useState, useRef, useEffect } from 'react';
-import { SafeAreaView, View, Text, StyleSheet, Switch, Dimensions, Animated, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet, Switch, Dimensions, Animated, TouchableOpacity, Image, ActivityIndicator} from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { setDoc, doc, collection, addDoc, getDoc } from 'firebase/firestore';
+import { setDoc, doc, collection, addDoc, getDocs, query, where, getDoc, onSnapshot} from 'firebase/firestore';
 import { db } from 'lib/firebase';
 import { useGlobalContext } from 'context/GlobalProvider';
 import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
 import AddDiaryBtn from 'components/AddDiaryBtn';
 import DiarySettings from '../../components/DiarySettings';
 import { isLoading } from 'expo-font';
+import WaterCard from '../../components/WaterCard';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = 250;
@@ -16,78 +17,17 @@ const SPACING = 10;
 const ITEM_WIDTH = CARD_WIDTH + SPACING * 2;
 const EMPTY_ITEM_WIDTH = (width - ITEM_WIDTH) / 2;
 
-
-const Card = ({ item, index, scrollX }) => {
-  const inputRange = [
-    (index - 2) * ITEM_WIDTH,
-    (index - 1) * ITEM_WIDTH,
-    index * ITEM_WIDTH,
-  ];
-
-  const scale = scrollX.interpolate({
-    inputRange,
-    outputRange: [0.8, 1, 0.8],
-  });
-
-  const opacity = scrollX.interpolate({
-    inputRange,
-    outputRange: [0.5, 1, 0.5],
-  });
-
-
-  if (item.type === 'settings') {
-    const { diaryIdString } = item.key
-    return (
-      <TouchableOpacity onPress={() => {router.push(`/(diarySetting)/${diaryIdString}`)}}>
-        <Animated.View
-          style={[
-            styles.card,
-            styles.settingsCard,
-            {
-              transform: [{ scale }],
-              opacity,
-            },
-          ]}
-        >
-          <Text style={styles.settingsTitle}>Diary Settings</Text>
-          {/* Add more settings options here */}
-        </Animated.View>
-      </TouchableOpacity>
-    );
-  }
-
-  return (
-    <Link href={`/(waterCard)/1`} asChild>
-      <TouchableOpacity>
-        <Animated.View
-          style={[
-            styles.card,
-            {
-              transform: [{ scale }],
-              opacity,
-            },
-          ]}
-        >
-          <Text style={styles.cardDate}>{item.date}</Text>
-          <View style={styles.imagePlaceholder}></View>
-          <Text style={styles.cardDetail}>Height: {item.height} cm</Text>
-          <Text style={styles.cardDetail}>Note: {item.note}</Text>
-
-        </Animated.View>
-      </TouchableOpacity>
-    </Link>
-  );
-};
-
 export default function App() {
-    const [switchValue, setSwitch] = useState(false);
-    const scrollX = useRef(new Animated.Value(0)).current;
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [diary, setDiary] = useState(null)
+    const [switchValue, setSwitch] = useState(false)
+    const scrollX = useRef(new Animated.Value(0)).current
+    const [activeIndex, setActiveIndex] = useState(0)
+    const [cards, setCards] = useState(null)
+    const [cardData, setCardData] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
+    const [diary, setdiary] = useState(null)
     const handleSwitch = (e) => {
       setSwitch(e);
-    };
+    }
     const { diaryId } = useGlobalSearchParams()
     const diaryIdString = diaryId?.toString()
     
@@ -108,15 +48,57 @@ export default function App() {
 
     const { user } = useGlobalContext()
 
+    useEffect(() => {
+      if(cards){
+        const transformedData = [
+          { key: 'empty-left' },
+          { key: diaryIdString, type: 'settings' },
+          ...cards.map(doc => ({
+            key: doc.id, 
+            date: doc.date,
+            height: doc.height,
+            note: doc.note
+          })),
+          { key: 'empty-right' },
+        ];
+
+        setCardData(transformedData)
+    }
+    }, [cards])
+
     const fetch_data = async() => {
       try{
         const diaryRef = doc(db, "diaries", diaryId.toString())
         const diary = (await getDoc(diaryRef)).data()
-        setDiary(diary)
+        setdiary(diary)
       }catch(err){
         console.log(err)
       }
     }
+
+    console.log(cardData)
+
+    useFocusEffect(
+      React.useCallback(
+      () => {
+      const unSub = onSnapshot(doc(db, "diaries", diaryIdString), async(res) => {
+        const items = res.data().wateringRecords
+        const promises = items.map(async (item) => {
+          const waterCardRef = doc(db, "watercards", item)
+          const waterCard = (await getDoc(waterCardRef)).data()
+          const waterCardData = { ...waterCard, id: item}
+          return waterCardData
+        })
+
+        const cardsData = await Promise.all(promises) 
+        setCards(cardsData)
+      })
+
+      return () => {
+        unSub()
+      }
+    }, []))
+
 
     useFocusEffect(
       React.useCallback(() => {
@@ -135,13 +117,15 @@ export default function App() {
     return (
       <SafeAreaView style={styles.container}>
         <View className='flex-1'>
+          { isLoading ? (<ActivityIndicator/>) : (
+            <>
           <Animated.FlatList
-            data={data}
+            data={cardData}
             renderItem={({ item, index }) => {
               if (item.key === 'empty-left' || item.key === 'empty-right') {
                 return <View style={{ width: EMPTY_ITEM_WIDTH }} />;
               }
-              return <Card item={item} index={index} scrollX={scrollX} />;
+              return <WaterCard item={item} index={index} scrollX={scrollX} width={width}/>;
             }}
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -156,7 +140,7 @@ export default function App() {
           />
 
           <View style={styles.pagination}>
-            {data.slice(1, -1).map((_, index) => (
+            {cards?.slice(-1, 1).map((_, index) => (
               <View
                 key={index}
                 style={[
@@ -165,18 +149,19 @@ export default function App() {
                 ]}
               />
             ))}
-          </View>
+          </View> 
+        </>)}
 
           { <View style={styles.infoCard}>
-            <Text style={styles.PlantName}>{diary?.plantName}</Text>
+            <Text style={styles.PlantName}>{cards?.plantName}</Text>
             <Text style={styles.days}>23 Days</Text>
-            <Text style={styles.plantType}>{diary?.plantType}</Text>
-            <Text style={styles.wateringInfo}> {`Day left to water: ${diary?.createdAt} days`}</Text>
+            <Text style={styles.plantType}>{cards?.plantType}</Text>
+            <Text style={styles.wateringInfo}> {`Day left to water: ${cards?.createdAt} days`}</Text>
             <View style={styles.reminderRow}>
               <Text style={styles.reminderText}>Watering Reminder:</Text>
               <Switch value={switchValue} onValueChange={handleSwitch} />
             </View>
-            <AddDiaryBtn title = "add watering record" handlePress={() => {router.push("/(waterCard)/1")}} isLoading={false}/>
+            <AddDiaryBtn title = "add watering record" handlePress={() => { console.log('diaryId: ', diaryId); router.push(`/(addWaterCard)/${diaryId}`)}} isLoading={false}/>
           </View> }
 
         </View>

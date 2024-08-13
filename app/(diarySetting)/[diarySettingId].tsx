@@ -3,15 +3,54 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Switch, Scr
 import Slider from '@react-native-community/slider';
 import DiarySetting from 'components/DiarySetting';
 import { useLocalSearchParams } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from 'lib/firebase';
 
 const PlantInfo = () => {
   const [plantName, setPlantName] = useState('');
   const [plantDetail, setPlantDetail] = useState('');
   const [wateringInterval, setWateringInterval] = useState(0);
   const [reminderEnabled, setReminderEnabled] = useState(false);
+  const [diary, setdiary] = useState(null)
 
   const { diarySettingId } = useLocalSearchParams()
-  console.log(diarySettingId)
+  const diaryId = diarySettingId.toString()
+
+  const onSubmit = async(plantName, plantType, WaterFrequency, WaterReminder) => {
+    try{
+      const docRef = doc(db, 'diaries', diaryId);
+      await updateDoc(docRef, {
+        plantName: plantName,
+        plantType: plantType,
+        wateringFrequency: WaterFrequency,
+        waterReminder: WaterReminder
+      })
+      console.log('doc is revised')
+    } catch (err) {
+      console.log('setDiary', err);
+    } 
+  }
+
+  const fetch_data = async() => {
+    try{
+      const diaryRef = doc(db, "diaries", diaryId)
+      const diary = (await getDoc(diaryRef)).data()
+      setdiary(diary)
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      try{
+        fetch_data()
+      }catch(error){
+        console.log(error.message)
+      }
+    }, [])
+  );
 
   return (
     <ScrollView style={styles.container}>
@@ -34,7 +73,7 @@ const PlantInfo = () => {
           </View>
         ))}
       </View>
-      <DiarySetting addToDiary={()=>{console.log("setdiary")}} btntitle = "submit"/>      
+      <DiarySetting addToDiary={()=>{console.log("setdiary")}} btntitle = "submit" diary = {diary} onSubmit={onSubmit}/>      
     </ScrollView>
   );
 };
