@@ -15,17 +15,17 @@ const AddDiaryBtn = ({
         }`}
         disabled={isLoading}
     >
-        <Text className={`text-green font-psemibold text-lg`}>
-            {title}
-        </Text>
 
-        {isLoading && (
+        {isLoading ? (
             <ActivityIndicator
                 animating={isLoading}
-                color="#fff"
                 size="small"
                 className="ml-2"
             />
+        ) : (
+            <Text className={`text-green font-psemibold text-lg`}>
+                {title}
+            </Text>
         )}
     </TouchableOpacity>
   )

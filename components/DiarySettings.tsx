@@ -2,17 +2,9 @@ import { StyleSheet, Text, View, TextInput, Switch} from 'react-native'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import AddDiaryBtn from './AddDiaryBtn';
-import { useRouter } from 'expo-router';
-import AddDiaryBtn from './AddDiaryBtn';
 import Slider from '@react-native-community/slider'; 
 import React from 'react'; 
 import upload from 'lib/storage';
-import { useRoute } from '@react-navigation/native';
-import { setDoc, doc, collection, addDoc } from 'firebase/firestore';
-import { db } from 'lib/firebase';
-import React from 'react'; 
-import upload from 'lib/storage';
-import { useRoute } from '@react-navigation/native';
 import { setDoc, doc, collection, addDoc } from 'firebase/firestore';
 import { db } from 'lib/firebase';
 
@@ -27,18 +19,24 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
     // console.log(image)
     const imgUrl = await upload(image)
     console.log(imgUrl)
-    
-    await addDoc(collection(db, "diaries"), {
-      uid: user.id,
-      createdAt: Date.now().toString(),
-      plantName: plantName,
-      plantType: plantType,
-      wateringFrequency: wateringFrequency,
-      waterReminder: reminder,
-      startingImage: imgUrl,
-      wateringRecords: [],
-    })
-
+    try{
+      setIsAdding(true)
+      await addDoc(collection(db, "diaries"), {
+        uid: user.id,
+        createdAt: Date.now().toString(),
+        plantName: plantName,
+        plantType: plantType,
+        wateringFrequency: wateringFrequency,
+        waterReminder: reminder,
+        startingImage: imgUrl,
+        wateringRecords: [],
+      })
+      setIsAdding(false)
+    } catch (err) {
+      console.log('add to diary fail', err);
+    } finally {
+      setIsAdding(false)
+    }
     router.replace('/home')
   };  
 
@@ -87,11 +85,6 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
         <Text className="text-white">Watering reminder:</Text>
         <Switch value={reminder} onValueChange={setReminder} />
       </View>
-      <AddDiaryBtn
-          title="Add to diary"
-          handlePress={addToDiary}
-          isLoading={isAdding}
-        />
       <AddDiaryBtn
           title="Add to diary"
           handlePress={addToDiary}

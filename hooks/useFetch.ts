@@ -77,7 +77,6 @@ const useFetch = (imagePath) => {
         }
     };
 
-
   useEffect(() => {
     fetchData();
   }, [imagePath]);
@@ -88,7 +87,7 @@ const useFetch = (imagePath) => {
 //   const timer = setTimeout(() => {
 //     return {data, isLoading, error }
 //   }, 3000)
-//   const returnData = await timer;  
+//   const returnData = await timer;
   return ( {data, isLoading, error, getfetch} )
 };
 

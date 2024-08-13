@@ -5,15 +5,15 @@ import { Link, router } from 'expo-router';
 import { deleteDoc, getDocs, collection, query, doc} from 'firebase/firestore';
 import { db } from 'lib/firebase';
 
-const handlePress = async() => {
-  router.push("/(diary)/1")
-  console.log('ererer')
-}
-const DiaryCard = ({title, image, docid, onDelete}) => {
+// const handlePress = async() => {
+//   router.push(`/(diary)/${}`)
+//   console.log('ererer')
+// }
+const DiaryCard = ({title, image, handlePress, onDelete}) => {
   
   return (
       <View style={styles.card} >
-        <TouchableOpacity style={styles.content} onPress = {async () => (router.push("/(diary)/1"))}>
+        <TouchableOpacity style={styles.content} onPress = {handlePress}>
           <Image 
             source={{uri: image}}
           />

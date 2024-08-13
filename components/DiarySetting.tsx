@@ -50,7 +50,6 @@ const DiarySetting = ({addToDiary, btntitle}) => {
           handlePress={addToDiary}
           isLoading={isAdding}
         />
-        
     </View>
   )
 }

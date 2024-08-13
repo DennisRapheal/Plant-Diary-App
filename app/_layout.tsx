@@ -43,7 +43,8 @@ const RootLayout = () => {
                 <Stack.Screen name="(tabs)" options={{ headerShown: false}} />
                 <Stack.Screen name="(diary)/[diaryId]" options={{ headerShown: false}} />
                 <Stack.Screen name="(diarySetting)/[diarySettingId]" options={{ headerShown: false}} />
-                <Stack.Screen name="(waterCard)/[wateringId]" options={{ headerShown: false}} />
+                <Stack.Screen name="(setWaterCard)/[wateringId]" options={{ headerShown: false}} />
+                <Stack.Screen name="(addWaterCard)/[cardId]" options={{ headerShown: false}} />
                 <Stack.Screen name="(test)/[result]" options={{ headerShown: false}} />
             </Stack>
         </GlobalProvider>

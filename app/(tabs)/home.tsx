@@ -23,14 +23,27 @@ const home = () => {
   const [error, setError] = useState<Error | null>(null);
   const { user, Loading } = useGlobalContext();
 
+
   const onDelete = async (docId) => {
     try {
       setDiaries((prevDiaries) => prevDiaries.filter(diary => diary.id !== docId));
       await deleteDoc(doc(db, "diaries", docId));
+
+      const q = query(collection(db, "watercards"), where("diaryid", "==", docId));
+      // Step 2: Execute the query
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach(async (document) => {
+        await deleteDoc(doc(db, "watercards", document.id));
+        console.log(`an water card with ID ${document.id} deleted successfully`);
+      });
       console.log('Document deleted successfully');
    } catch (err) {
       console.error('Error deleting document:', err);
     }
+  }
+
+  const handlePress = async(diaryid) => {
+    router.push(`/(diary)/${diaryid}`)
   }
 
   const getData = async() => {
@@ -76,7 +89,7 @@ const home = () => {
         <DiaryCard 
           title={ item.plantName }
           image={ item.startingImage }
-          docid={ item.id }
+          handlePress={ () => handlePress(item.id) }
           onDelete={ () => onDelete(item.id) }
         />
       )}
