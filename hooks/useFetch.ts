@@ -67,7 +67,6 @@ const useFetch = (imagePath) => {
 
             setData(response.data);
             console.log('Success:', response.data);
-            setIsLoading(false);
         // return { data, isLoading, error };
         } catch (err) {
             console.error('Error fetching data:', err);
@@ -81,14 +80,11 @@ const useFetch = (imagePath) => {
     fetchData();
   }, [imagePath]);
 
-  const getfetch = async () => {
-    await fetchData()
-  }
 //   const timer = setTimeout(() => {
 //     return {data, isLoading, error }
 //   }, 3000)
 //   const returnData = await timer;
-  return ( {data, isLoading, error, getfetch} )
+  return ( {data, isLoading, error} )
 };
 
 export default useFetch;
