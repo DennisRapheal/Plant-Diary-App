@@ -1,13 +1,12 @@
 import { View, Text, Alert, StyleSheet, ScrollView } from 'react-native'
 
 import { useState } from 'react'
-import AddDiaryBtn from '../../components/AddDiaryBtn';
 import * as ImagePicker from 'expo-image-picker';
-import UplaodImgBlock from '../../components/UplaodImgBlock';
-import DiarySettings from '../../components/DiarySettings';
 import React from 'react';
 import { useGlobalContext } from 'context/GlobalProvider';
-import PlantInfo from 'app/(diarySetting)/[diarySettingId]';
+
+import UplaodImgBlock from '../../components/UplaodImgBlock';
+import DiarySettings from '../../components/DiarySettings';
 
 
 const create = () => {

@@ -23,7 +23,6 @@ const result = () => {
   const [plantWater, setPlantWater] = useState("");
   const [image, setImage] = useState("");
   const [plantDetail, setPlantDetail] = useState("");
-  const [pressed, setPressed] = useState(false);
 
   
   
@@ -36,8 +35,6 @@ const result = () => {
     setPlantName(strData.results[0].species.commonNames[0])
     setPlantType(strData.results[0].species.family.scientificName)
     setImage(strData.startingImage);
-    console.log(strData.results[0].gbif)
-    console.log(strData.results[0].iucn)
   }, []);
 
   return (
@@ -98,7 +95,5 @@ const styles = StyleSheet.create({
 })
 
 //hook 
-
-
 // imagePath should be like: images.plant !!!!!
 

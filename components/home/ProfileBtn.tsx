@@ -4,11 +4,11 @@ import React from 'react'
 const ProfileBtn = ({ iconUrl, handlePress}) => {
     return (
         <TouchableOpacity style={styles.btnContainer} onPress={handlePress} className="flex-row">
-        <Image 
-            source={iconUrl}
-            resizeMode="cover"
-            style={styles.icon}
-        />
+            <Image 
+                source={iconUrl}
+                resizeMode="cover"
+                style={styles.icon}
+            />
         </TouchableOpacity>
     )
 }

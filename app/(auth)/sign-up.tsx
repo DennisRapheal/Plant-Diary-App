@@ -33,8 +33,9 @@ const SignUp = () => {
           const res = await createUserWithEmailAndPassword(auth, email, password)
           await setDoc(doc(db, "users", res.user.uid), {
             username: username,
-            emial: email,
+            email: email,
             id: res.user.uid,
+            profileImg: images.profile
           });
         }catch (err) {
           console.log(err)

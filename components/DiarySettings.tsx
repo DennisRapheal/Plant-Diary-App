@@ -23,7 +23,7 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
       setIsAdding(true)
       await addDoc(collection(db, "diaries"), {
         uid: user.id,
-        createdAt: Date.now().toString(),
+        createdAt: Date.now().toLocaleString(), // need to be reconverted to date type 
         plantName: plantName,
         plantType: plantType,
         wateringFrequency: wateringFrequency,
@@ -31,7 +31,6 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
         startingImage: imgUrl,
         wateringRecords: [],
       })
-      setIsAdding(false)
     } catch (err) {
       console.log('add to diary fail', err);
     } finally {

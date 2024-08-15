@@ -1,6 +1,5 @@
 import { View, Text, TextInput, Button, Image, Switch, Alert, StyleSheet } from 'react-native'
 import { useState, useEffect} from 'react'
-
 import React from 'react'
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';

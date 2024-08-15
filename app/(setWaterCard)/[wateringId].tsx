@@ -47,6 +47,7 @@ const setWaterCard = () => {
       setIsLoading(false)
     }
   }
+
   useEffect(() => {
     console.log('card page ');
     getWaterCard();
@@ -95,44 +96,47 @@ const setWaterCard = () => {
     style={styles.container}
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     keyboardVerticalOffset={220}>
-      <UplaodImgBlock 
-        image={image}
-        pickImage={pickImage}
-        script={"Upload an image!"}
-      />
-      <View style={styles.formContainer2}>
-          <Text style={styles.dateText}>2024 8/15</Text>
-          <View style={styles.row}>
-            <Text>Watered</Text>
-            <Switch
-              value={isWatered}
-              onValueChange={setIsWatered}
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={isWatered ? "#f5dd4b" : "#f4f3f4"}
-            />
-            <Text>Height</Text>
-            <TextInput
-              style={styles.heightInput}
-              value={height}
-              onChangeText={setHeight}
-              placeholder="cm"
-              keyboardType="numeric"
-            />
-          </View>
-          <TextInput
-            style={styles.noteInput}
-            value={note}
-            onChangeText={setNote}
-            placeholder="write down some words..."
-            multiline
-          />
-          <AddDiaryBtn
-          title={"Confirm modify"}
-          handlePress={setWaterCard}
-          isLoading={isLoading}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <>
+        <UplaodImgBlock 
+          image={image}
+          pickImage={pickImage}
+          script={"Upload an image!"}
         />
-      </View>
-      
+        <View style={styles.formContainer2}>
+            <Text style={styles.dateText}>2024 8/15</Text>
+            <View style={styles.row}>
+              <Text>Watered</Text>
+              <Switch
+                value={isWatered}
+                onValueChange={setIsWatered}
+                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                thumbColor={isWatered ? "#f5dd4b" : "#f4f3f4"}
+              />
+              <Text>Height</Text>
+              <TextInput
+                style={styles.heightInput}
+                value={height}
+                onChangeText={setHeight}
+                placeholder="cm"
+                keyboardType="numeric"
+              />
+            </View>
+            <TextInput
+              style={styles.noteInput}
+              value={note}
+              onChangeText={setNote}
+              placeholder="write down some words..."
+              multiline
+            />
+            <AddDiaryBtn
+            title={"Confirm modify"}
+            handlePress={setWaterCard}
+            isLoading={isLoading}
+          />
+        </View>
+        </>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   )
 }
