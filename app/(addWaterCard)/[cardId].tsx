@@ -6,7 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import UplaodImgBlock from 'components/UplaodImgBlock';
 import AddDiaryBtn from 'components/AddDiaryBtn';
-import { setDoc, doc, collection, addDoc , query, where, getDocs, updateDoc, arrayUnion} from 'firebase/firestore';
+import { setDoc, doc, collection, addDoc , query, where, getDocs, updateDoc, arrayUnion, Timestamp} from 'firebase/firestore';
 import { db } from 'lib/firebase';
 import upload from 'lib/storage';
 
@@ -42,7 +42,7 @@ const InputCard = () => {
       setIsLoading(true)
       const waterid = await addDoc(collection(db, "watercards"), {
         dairyid: dairyid,
-        createdAt: Date.now(),
+        createdAt: Timestamp.now(),
         watered: isWatered,
         height: height, 
         startingImage: imgUrl,

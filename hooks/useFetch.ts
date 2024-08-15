@@ -47,22 +47,22 @@ const useFetch = (imagePath) => {
         const fileInfo = await FileSystem.getInfoAsync(imagePath);
         const form = new FormData();
         form.append('images', {
-            uri: imagePath,
-            type: getMimeType(fileInfo.uri), // Get MIME type from file extension or content
-            name: fileInfo.uri.split('/').pop(), // Use the file name from URI
+          uri: imagePath,
+          type: getMimeType(fileInfo.uri), // Get MIME type from file extension or content
+          name: fileInfo.uri.split('/').pop(), // Use the file name from URI
         });
         const url = 'https://my-api.plantnet.org/v2/identify/all' + '?api-key=' + ApiKey
         const response = await axios.post(url, form , {
-            params: {
-                'include-related-images': 'false',
-                'no-reject': 'false',
-                'nb-results': '3',
-                'lang': 'en',
-                'type': 'kt',
-            },
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            }
+          params: {
+              'include-related-images': 'false',
+              'no-reject': 'false',
+              'nb-results': '3',
+              'lang': 'en',
+              'type': 'kt',
+          },
+          headers: {
+              'Content-Type': 'multipart/form-data',
+          }
         });
 
             setData(response.data);

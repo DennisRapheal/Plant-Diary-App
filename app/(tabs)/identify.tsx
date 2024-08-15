@@ -7,7 +7,7 @@ import UplaodImgBlock from '../../components/UplaodImgBlock';
 import AddDiaryBtn from '../../components/AddDiaryBtn';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
-const ApiKey = '2b10sL5sTH5tnq7zhTwNVCvYge';
+const ApiKey = 'pDnMKtAz45bKVamyRJETuNGYMf4t472T9316950fqoVlWy83Aw';
 
 const identify = () => {
   const router = useRouter();
@@ -19,56 +19,41 @@ const identify = () => {
 
 
   const clickIdentify = async () => {
+    const convertFileToBase64 = async (fileUri) => {
+      if (!fileUri) {
+        throw new Error('File URI is null or undefined.');
+      }
+      try {
+        const base64String = await FileSystem.readAsStringAsync(fileUri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        return base64String;
+      } catch (err) {
+        console.error('Error converting file to base64:', err);
+        throw err;
+      }
+    };
+    
     if (image != null) {
-      const getMimeType = (uri) => {
-        // Extract file extension from the URI
-      const extension = uri.split('.').pop().toLowerCase();
-        // Map extensions to MIME types
-        switch (extension) {
-          case 'jpg':
-          case 'jpeg':
-            return 'image/jpeg';
-          case 'png':
-            return 'image/png';
-          case 'gif':
-            return 'image/gif';
-          case 'pdf':
-            return 'application/pdf';
-          case 'txt':
-            return 'text/plain';
-          case 'html':
-            return 'text/html';
-          case 'csv':
-            return 'text/csv';
-          case 'zip':
-            return 'application/zip';
-          default:
-            return 'application/octet-stream'; // Default MIME type for unknown file types
-        }
-      };
       try{
         setIsLoading(true)
-        const fileInfo = await FileSystem.getInfoAsync(image);
-        const form = new FormData();
-        form.append('images', {
-          uri: image,
-          type: getMimeType(fileInfo.uri), // Get MIME type from file extension or content
-          name: fileInfo.uri.split('/').pop(), // Use the file name from URI
-        });
-        const url = 'https://my-api.plantnet.org/v2/identify/all' + '?api-key=' + ApiKey
-        const response = await axios.post(url, form , {
+        const base64String = await convertFileToBase64(image);
+        const apiInfo = {
+          api_key: ApiKey,
+          images: [base64String],
+          classification_level: 'all',
+        };
+
+        const response = await axios.post('https://plant.id/api/v3/identification', apiInfo, {
           params: {
-              'include-related-images': 'false',
-              'no-reject': 'false',
-              'nb-results': '3',
-              'lang': 'en',
-              'type': 'kt',
+            details: 'common_names,url,description,taxonomy,rank,gbif_id,inaturalist_id,image,synonyms,edible_parts,watering',
+            language: 'en',
           },
           headers: {
-              'Content-Type': 'multipart/form-data',
-          }
+            'Content-Type': 'application/json',
+          },
         });
-        await setResData(response.data)
+        setResData(response.data)
         console.log('Success:', typeof response.data);
         const strData = response.data
         strData.startingImage = image
@@ -85,7 +70,7 @@ const identify = () => {
     }
   }
 
-  const pickImage = async () => {
+  const pickImageFromLibrary = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images, // Allow only images
       allowsEditing: true,
@@ -95,10 +80,45 @@ const identify = () => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      console.log('success upload img');
+      console.log('success pick img');
     } else {
       Alert.alert('Oops...', 'Please upload an image again')
     }
+  };
+
+  const takePhotoWithCamera = async () => {
+    let result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      // Handle the captured photo
+      setImage(result.assets[0].uri);
+      console.log('success take a photo img');
+    }
+  };
+
+  const showImagePickerOptions = () => {
+    Alert.alert(
+      'Select Image Source',
+      'Choose an option to select an image:',
+      [
+        {
+          text: 'Camera',
+          onPress: takePhotoWithCamera,
+        },
+        {
+          text: 'Library',
+          onPress: pickImageFromLibrary,
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ]
+    );
   };
 
   return (
@@ -106,7 +126,7 @@ const identify = () => {
       <Text style={styles.title}>Let's find your plant</Text>
       <UplaodImgBlock 
         image={image}
-        pickImage={pickImage}
+        pickImage={showImagePickerOptions}
         script={"pick an image to identify"}
       />
 

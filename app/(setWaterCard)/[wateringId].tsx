@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import UplaodImgBlock from 'components/UplaodImgBlock';
 import AddDiaryBtn from 'components/AddDiaryBtn';
 import { useFocusEffect } from '@react-navigation/native';
-import { updateDoc, doc, collection, addDoc , query, where, getDoc} from 'firebase/firestore';
+import { updateDoc, doc, collection, addDoc , query, where, getDoc, Timestamp} from 'firebase/firestore';
 import { db } from 'lib/firebase';
 import upload from 'lib/storage';
 import { useRouter } from 'expo-router';
@@ -76,7 +76,7 @@ const setWaterCard = () => {
       const docRef = doc(db, 'watercards', waterCardid);
       await updateDoc(docRef, {
         // createdAt: Date.now().toString(),
-        createdAt: Date.now().toString(),
+        createdAt: Timestamp.now() ,
         watered: isWatered,
         height: height, 
         startingImage: imgUrl,

@@ -20,28 +20,38 @@ const result = () => {
   const [plantName, setPlantName] = useState("");
   const [percent, setPersent] = useState(0);
   const [plantType, setPlantType] = useState("");
+  const [details, setDetails] = useState("");
   const [plantWater, setPlantWater] = useState("");
   const [image, setImage] = useState("");
   const [plantDetail, setPlantDetail] = useState("");
 
   
-  
   useEffect(() => {
     const decodedData = decodeURIComponent(data);
     // Parse the JSON string to get the original object
     const strData = JSON.parse(decodedData);
-    console.log(typeof strData, strData)
-    setPersent(strData.results[0].score);
-    setPlantName(strData.results[0].species.commonNames[0])
-    setPlantType(strData.results[0].species.family.scientificName)
-    setImage(strData.startingImage);
+    const temp = strData.result.classification.suggestions[0]
+    console.log(strData.result.classification.suggestions[0])
+    const isPlant = strData.result.is_plant.binary; 
+    if (isPlant) {
+      setPersent(strData.result.is_plant.probability);
+      setPlantName(temp.details.common_names)
+      setPlantType(temp.details.taxonomy.family)
+      setDetails(temp.details.description.value)
+      setImage(temp.startingImage);
+    } else {
+      Alert.alert('Oops...', 'This image is probably not a plant!!!')
+    }
   }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>We Find Your Plant!</Text>
       <View style={styles.infoContainer}>
-       <Text className='text-xl'>This is a {percent} {plantName}</Text>
+        <ScrollView>
+          <Text className='text-2xl'>This is a {percent} {plantName} {'\n'}</Text>
+          <Text>{details}</Text>
+       </ScrollView>
       </View>
       <View style={styles.formContainer}>
         <DiarySettings 
