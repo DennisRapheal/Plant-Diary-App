@@ -1,30 +1,76 @@
 import { View, Text, TextInput, Button, Image, Switch, Alert, StyleSheet } from 'react-native'
 import { useState, useEffect} from 'react'
-
 import React from 'react'
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import UplaodImgBlock from '../../components/UplaodImgBlock';
 import AddDiaryBtn from '../../components/AddDiaryBtn';
+import axios from 'axios';
+import * as FileSystem from 'expo-file-system';
+const ApiKey = 'pDnMKtAz45bKVamyRJETuNGYMf4t472T9316950fqoVlWy83Aw';
 
 const identify = () => {
   const router = useRouter();
   const [image, setImage] = useState<string | null>(null);
   // deal with btn
-  const [isAdding, setIsAdding] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [resData, setResData] = useState("");
   const [pressed, setIsPressed] = useState(false);
-  const clickIdentify = () => {
+
+
+  const clickIdentify = async () => {
+    const convertFileToBase64 = async (fileUri) => {
+      if (!fileUri) {
+        throw new Error('File URI is null or undefined.');
+      }
+      try {
+        const base64String = await FileSystem.readAsStringAsync(fileUri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        return base64String;
+      } catch (err) {
+        console.error('Error converting file to base64:', err);
+        throw err;
+      }
+    };
+    
     if (image != null) {
-      router.push({
-        pathname: '/(test)/[result]',
-        params: { result: image},
-      });
+      try{
+        setIsLoading(true)
+        const base64String = await convertFileToBase64(image);
+        const apiInfo = {
+          api_key: ApiKey,
+          images: [base64String],
+          classification_level: 'all',
+        };
+
+        const response = await axios.post('https://plant.id/api/v3/identification', apiInfo, {
+          params: {
+            details: 'common_names,url,description,taxonomy,rank,gbif_id,inaturalist_id,image,synonyms,edible_parts,watering',
+            language: 'en',
+          },
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        setResData(response.data)
+        console.log('Success:', typeof response.data);
+        const strData = response.data
+        strData.startingImage = image
+        const jsonString = JSON.stringify(strData);
+        const encodedData = encodeURIComponent(jsonString);
+        router.push(`/(test)/${encodedData}`);
+      } catch (err){
+        console.error(err);
+      } finally {
+        setIsLoading(true)
+      }
     } else {
       Alert.alert('Oops...', 'No image is selected. ')
     }
   }
 
-  const pickImage = async () => {
+  const pickImageFromLibrary = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images, // Allow only images
       allowsEditing: true,
@@ -34,9 +80,45 @@ const identify = () => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      console.log('success pick img');
     } else {
       Alert.alert('Oops...', 'Please upload an image again')
     }
+  };
+
+  const takePhotoWithCamera = async () => {
+    let result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      // Handle the captured photo
+      setImage(result.assets[0].uri);
+      console.log('success take a photo img');
+    }
+  };
+
+  const showImagePickerOptions = () => {
+    Alert.alert(
+      'Select Image Source',
+      'Choose an option to select an image:',
+      [
+        {
+          text: 'Camera',
+          onPress: takePhotoWithCamera,
+        },
+        {
+          text: 'Library',
+          onPress: pickImageFromLibrary,
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ]
+    );
   };
 
   return (
@@ -44,7 +126,7 @@ const identify = () => {
       <Text style={styles.title}>Let's find your plant</Text>
       <UplaodImgBlock 
         image={image}
-        pickImage={pickImage}
+        pickImage={showImagePickerOptions}
         script={"pick an image to identify"}
       />
 
@@ -52,7 +134,7 @@ const identify = () => {
         <AddDiaryBtn 
           title="identify the plant!"
           handlePress={clickIdentify}
-          isLoading={isAdding}
+          isLoading={isLoading}
         />
       </View>
     </View>
@@ -60,6 +142,8 @@ const identify = () => {
 }
 
 export default identify
+
+
 
 const styles = StyleSheet.create({
   container: {

@@ -9,69 +9,49 @@ import DiarySettings from '../../components/DiarySettings';
 import { useGlobalContext } from 'context/GlobalProvider';
 
 const result = () => {
-  const params = useLocalSearchParams();
   // const [returnData, setReturnData]= useState(null);
-  
-  const [returnData, setReturnData] = useState(null)
-  const [isLoading, setIsLoading] = useState(null)
-  const [error, setError] = useState(null)
-  const { Data, Loading, err, fetching} = useFetch(params.result);
+  const data= useLocalSearchParams().result;
+  const [returnData, setReturnData] = useState('');
+  const [isLoading, setIsLoading] = useState(false)
   const { user } = useGlobalContext()
   
-  const [isAdding, setIsAdding] = useState(false);
   // const [waitFetch, setWaitFetch] = useState(true);
   const [isPlant, setIsPlant] = useState(false);
   const [plantName, setPlantName] = useState("");
+  const [percent, setPersent] = useState(0);
   const [plantType, setPlantType] = useState("");
+  const [details, setDetails] = useState("");
   const [plantWater, setPlantWater] = useState("");
+  const [image, setImage] = useState("");
   const [plantDetail, setPlantDetail] = useState("");
-  const [pressed, setPressed] = useState(false);
 
-  // useEffect(() => {
-  //   if (returnData) {
-  //     console.log('Return Data:', returnData);
-  //     setIsPlant(returnData.result.is_plant.binary);
-  //     if(returnData.result.classification.suggestions.length > 0){
-  //       const suggestions = returnData.result.classification.suggestions[0].details;
-  //       setPlantName(suggestions.common_names);
-  //       setPlantType(suggestions.taxonomy?.genus);
-  //       setPlantWater(''); // Replace with actual logic if needed
-  //       setPlantDetail(suggestions.description?.value);
-  //     }else{
-  //       console.warn('No suggestions available.');
-  //     }
-  //   } else {
-  //     console.log('Return Data Not Fetched:', returnData);
-  //   }
-  // }, [returnData, isLoading]);
-
+  
   useEffect(() => {
-    if (returnData==null || returnData=='undefined') {
-      fetching
-      setReturnData(Data)
-      setIsLoading(Loading)
-      setError(err)
-      console.log("ere", JSON.stringify(returnData))
-    }else{
-      console.log("YA!!", JSON.stringify(returnData))
+    const decodedData = decodeURIComponent(data);
+    // Parse the JSON string to get the original object
+    const strData = JSON.parse(decodedData);
+    const temp = strData.result.classification.suggestions[0]
+    console.log(strData.result.classification.suggestions[0])
+    const isPlant = strData.result.is_plant.binary; 
+    if (isPlant) {
+      setPersent(strData.result.is_plant.probability);
+      setPlantName(temp.details.common_names)
+      setPlantType(temp.details.taxonomy.family)
+      setDetails(temp.details.description.value)
+      setImage(temp.startingImage);
+    } else {
+      Alert.alert('Oops...', 'This image is probably not a plant!!!')
     }
-  }, [returnData])
+  }, []);
 
-  const addToDiary = () => {
-    setPressed(true)
-  }
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>We Find Your Plant!</Text>
-      <View style={styles.formContainer2}>
-        { false? (
-          <ActivityIndicator size="large" />
-        ) : (
-          <PlantInfo 
-           isPlant={true}
-           details= {returnData}
-          />
-        )}
+      <View style={styles.infoContainer}>
+        <ScrollView>
+          <Text className='text-2xl'>This is a {percent} {plantName} {'\n'}</Text>
+          <Text>{details}</Text>
+       </ScrollView>
       </View>
       <View style={styles.formContainer}>
         <DiarySettings 
@@ -79,7 +59,7 @@ const result = () => {
           identifyPlantType={plantType}
           identifyWater={plantWater}
           user={user}
-          image={params.result}
+          image={image}
         />
       </View>
     </ScrollView>
@@ -89,6 +69,13 @@ const result = () => {
 export default result
 
 const styles = StyleSheet.create({
+  infoContainer: {
+    width: '100%',
+    height: "20%",
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
   container: {
     marginTop: 50, 
     flex: 1,
@@ -116,3 +103,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 })
+
+//hook 
+// imagePath should be like: images.plant !!!!!
+

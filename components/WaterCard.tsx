@@ -46,8 +46,6 @@ const WaterCard = ({ item, index, scrollX, width}) => {
         );
     }
     return (
-
-        
         <TouchableOpacity onPress={ () => ( router.push(`/(setWaterCard)/${item.key}`) ) }>
             <Animated.View
             style={[
@@ -59,7 +57,7 @@ const WaterCard = ({ item, index, scrollX, width}) => {
             ]}
             >
             <Text style={styles.cardDate}>{item.createdAt}</Text>
-            <Image style={styles.imagePlaceholder} source={{uri:item.startingImage}}/>
+            <Image style={styles.imagePlaceholder} source={{ uri: item.startingImage }} />
             <Text style={styles.cardDetail}>Height: {item.height} cm</Text>
             <Text style={styles.cardDetail}>Note: {item.note}</Text>
             </Animated.View>

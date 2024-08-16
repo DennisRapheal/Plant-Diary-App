@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import UplaodImgBlock from 'components/UplaodImgBlock';
 import AddDiaryBtn from 'components/AddDiaryBtn';
 import { useFocusEffect } from '@react-navigation/native';
-import { updateDoc, doc, collection, addDoc , query, where, getDoc} from 'firebase/firestore';
+import { updateDoc, doc, collection, addDoc , query, where, getDoc, Timestamp} from 'firebase/firestore';
 import { db } from 'lib/firebase';
 import upload from 'lib/storage';
 import { useRouter } from 'expo-router';
@@ -47,6 +47,7 @@ const setWaterCard = () => {
       setIsLoading(false)
     }
   }
+
   useEffect(() => {
     console.log('card page ');
     getWaterCard();
@@ -75,7 +76,7 @@ const setWaterCard = () => {
       const docRef = doc(db, 'watercards', waterCardid);
       await updateDoc(docRef, {
         // createdAt: Date.now().toString(),
-        createdAt: Date.now().toString(),
+        createdAt: Timestamp.now() ,
         watered: isWatered,
         height: height, 
         startingImage: imgUrl,
@@ -95,44 +96,47 @@ const setWaterCard = () => {
     style={styles.container}
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     keyboardVerticalOffset={220}>
-      <UplaodImgBlock 
-        image={image}
-        pickImage={pickImage}
-        script={"Upload an image!"}
-      />
-      <View style={styles.formContainer2}>
-          <Text style={styles.dateText}>2024 8/15</Text>
-          <View style={styles.row}>
-            <Text>Watered</Text>
-            <Switch
-              value={isWatered}
-              onValueChange={setIsWatered}
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={isWatered ? "#f5dd4b" : "#f4f3f4"}
-            />
-            <Text>Height</Text>
-            <TextInput
-              style={styles.heightInput}
-              value={height}
-              onChangeText={setHeight}
-              placeholder="cm"
-              keyboardType="numeric"
-            />
-          </View>
-          <TextInput
-            style={styles.noteInput}
-            value={note}
-            onChangeText={setNote}
-            placeholder="write down some words..."
-            multiline
-          />
-          <AddDiaryBtn
-          title={"Confirm modify"}
-          handlePress={setWaterCard}
-          isLoading={isLoading}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <>
+        <UplaodImgBlock 
+          image={image}
+          pickImage={pickImage}
+          script={"Upload an image!"}
         />
-      </View>
-      
+        <View style={styles.formContainer2}>
+            <Text style={styles.dateText}>2024 8/15</Text>
+            <View style={styles.row}>
+              <Text>Watered</Text>
+              <Switch
+                value={isWatered}
+                onValueChange={setIsWatered}
+                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                thumbColor={isWatered ? "#f5dd4b" : "#f4f3f4"}
+              />
+              <Text>Height</Text>
+              <TextInput
+                style={styles.heightInput}
+                value={height}
+                onChangeText={setHeight}
+                placeholder="cm"
+                keyboardType="numeric"
+              />
+            </View>
+            <TextInput
+              style={styles.noteInput}
+              value={note}
+              onChangeText={setNote}
+              placeholder="write down some words..."
+              multiline
+            />
+            <AddDiaryBtn
+            title={"Confirm modify"}
+            handlePress={setWaterCard}
+            isLoading={isLoading}
+          />
+        </View>
+        </>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   )
 }

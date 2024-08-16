@@ -6,7 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import UplaodImgBlock from 'components/UplaodImgBlock';
 import AddDiaryBtn from 'components/AddDiaryBtn';
-import { setDoc, doc, collection, addDoc , query, where, getDocs, updateDoc, arrayUnion} from 'firebase/firestore';
+import { setDoc, doc, collection, addDoc , query, where, getDocs, updateDoc, arrayUnion, Timestamp} from 'firebase/firestore';
 import { db } from 'lib/firebase';
 import upload from 'lib/storage';
 
@@ -42,7 +42,7 @@ const InputCard = () => {
       setIsLoading(true)
       const waterid = await addDoc(collection(db, "watercards"), {
         dairyid: dairyid,
-        createdAt: Date.now(),
+        createdAt: Timestamp.now(),
         watered: isWatered,
         height: height, 
         startingImage: imgUrl,
@@ -63,40 +63,19 @@ const InputCard = () => {
     router.replace('/(tabs)/home')
   }
 
-  const setWaterCard = async () => {
-    const imgUrl = await upload(image)
-    console.log(imgUrl)
-    try{
-      const docRef = doc(db, 'watercards', dairyid);
-      await setDoc(docRef, {
-        // createdAt: Date.now().toString(),
-        dairyid: dairyid,
-        createdAt: Date.now().toString(),
-        watered: isWatered,
-        height: height, 
-        startingImage: imgUrl,
-        note: note, 
-      })
-      setIsLoading(false)
-    } catch (err) {
-      console.log('setWaterCard', err);
-    } finally {
-      setIsLoading(false)
-    }
-    router.replace('/home')
-  }
-
   return (
     <KeyboardAvoidingView 
-    style={styles.container}
-    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    keyboardVerticalOffset={220}>
-      <UplaodImgBlock 
-        image={image}
-        pickImage={pickImage}
-        script={"Upload an image!"}
-      />
-      <View style={styles.formContainer2}>
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={250}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <>
+        <UplaodImgBlock 
+          image={image}
+          pickImage={pickImage}
+          script={"Upload an image!"}
+        />
+        <View style={styles.formContainer2}>
           <Text style={styles.dateText}>2024 8/15</Text>
           <View style={styles.row}>
             <Text>Watered</Text>
@@ -123,12 +102,13 @@ const InputCard = () => {
             multiline
           />
           <AddDiaryBtn
-          title={"Confirm modify"}
-          handlePress={addWaterCard}
-          isLoading={isLoading}
-        />
-      </View>
-      
+            title={"Add Card!"}
+            handlePress={addWaterCard}
+            isLoading={isLoading}
+          />
+        </View>
+        </>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   )
 }

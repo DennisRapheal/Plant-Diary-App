@@ -1,13 +1,10 @@
-import { StyleSheet, Text, View, FlatList, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, FlatList, ScrollView} from 'react-native'
 import React, { useEffect, useState }from 'react'
+import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack } from 'expo-router';
-import DiaryCard from '../../components/DiaryCard';
-import EmptyState from '../../components/EmptyState'
 import { images } from "../../constants";
 import { icons } from "../../constants";
-import LogoutBtn from "../../components/LogoutBtn";
-import ProfileBtn from "../../components/ProfileBtn";
 import { useUserStore } from 'lib/userStore';
 import { db, storage } from 'lib/firebase';
 import { deleteDoc, getDocs, collection, query, where, doc, getDoc, updateDoc} from 'firebase/firestore';
@@ -17,6 +14,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import upload from 'lib/storage';
 import { getDownloadURL, ref } from 'firebase/storage';
 
+import DiaryCard from '../../components/home/DiaryCard';
+import EmptyState from '../../components/home/EmptyState'
+import LogoutBtn from "../../components/home/LogoutBtn";
+import ProfileBtn from "../../components/home/ProfileBtn";
 
 const home = () => {
 
@@ -98,6 +99,7 @@ const home = () => {
       router.replace('/')
     })
   };
+
 
   return (
     <SafeAreaView className="bg-white" style={{ flex: 1 }}>

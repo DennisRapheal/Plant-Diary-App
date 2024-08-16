@@ -2,14 +2,13 @@ import { useState } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
-
+import { setDoc, doc, Timestamp } from "firebase/firestore";
 import { images } from "../../constants";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
 import React  from "react";
 import { useGlobalContext } from "../../context/GlobalProvider";
-
-import { auth } from "lib/firebase";
+import { auth, db } from "lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 const SignIn = () => {
 
@@ -26,7 +25,18 @@ const SignIn = () => {
         setIsLogged(true);
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            await signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+              // Signed in
+              const user = userCredential.user;
+              user.getIdToken().then(async (idToken) => {
+                await setDoc(doc(db, "tokens", user.uid), {
+                  uid: user.uid,
+                  idToken: idToken,
+                  createdAt: Timestamp.now(),
+                });
+              });
+            });
         }catch(err) {
             console.log(err)
         }finally {
