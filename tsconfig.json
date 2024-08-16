@@ -32,5 +32,5 @@
     "app/(tabs)/Bookmark.tsx",
     "app/(tabs)/_layout.tsx",
     "app/index.jsx"
-, "context/GlobalProvider.ts", "app/(setWaterCard)"  ]
+, "context/GlobalProvider.ts", "app/(setWaterCard)", "lib/sendTokens.js"  ]
 }

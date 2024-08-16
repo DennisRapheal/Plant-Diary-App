@@ -19,6 +19,11 @@ import EmptyState from '../../components/home/EmptyState'
 import LogoutBtn from "../../components/home/LogoutBtn";
 import ProfileBtn from "../../components/home/ProfileBtn";
 
+import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
+import axios from 'axios';
+
+
 const home = () => {
 
   const [diaries, setDiaries] = useState([])
@@ -26,6 +31,31 @@ const home = () => {
   const [error, setError] = useState<Error | null>(null)
   const { user, Loading } = useGlobalContext()
   const [ profileImageUrl, setProfileImageUrl ] = useState(null)
+
+  const notificationPermissions = async () => {
+    console.log('Requesting permission...');
+    try {
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status === 'granted') {
+            console.log('Notification permission granted.');
+        } else {
+            console.log('Notification permission denied.');
+        }
+    } catch (error) {
+        console.log('Error requesting notification permission:', error);
+    }
+  }
+
+  const functionsTest = async () => {
+    try { 
+      const response = await axios.get('http://127.0.0.1:5001/plant-diary-357fb/us-central1/helloWorld')
+      if(!response.ok) {
+        throw new Error('shit man')
+      }
+    }catch (error){
+      console.error('Error calling function:', error);
+    }
+  }
 
   const handleHeader = async(imageUrl) => {
     const url = await upload(imageUrl)
@@ -39,10 +69,6 @@ const home = () => {
       console.log(error.message)
     }
   }
-
-  console.log(diaries)
-
-
 
   const onDelete = async (docId) => {
     try {
@@ -88,16 +114,16 @@ const home = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      functionsTest()
+      notificationPermissions()
       getData();
     }, [])
   );
 
   const handleLogout = (e) => {
     e.preventDefault(); 
+    router.replace('/')
     auth.signOut()
-    .then(() => {
-      router.replace('/')
-    })
   };
 
 

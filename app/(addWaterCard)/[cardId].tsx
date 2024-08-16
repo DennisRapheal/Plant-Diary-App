@@ -114,43 +114,7 @@ const InputCard = () => {
 }
 
 export default InputCard
-// const Bookmark = () => {
-//   const [isWatered, setIsWatered] = useState(false);
-//   const [height, setHeight] = useState('');
-//   const [note, setNote] = useState('');
 
-//   const handleImageUpload = () => {
-//     // Implement image upload logic here
-//     console.log('Image upload triggered');
-//   };
-
-//   return (
-//     <KeyboardAvoidingView
-//       style={styles.container_small}
-//       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-//     >
-//       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-//         <ScrollView contentContainerStyle={styles.scrollContainer}>
-//           <TouchableOpacity onPress={() => {}} style={styles.backButton}>
-//             <Icon name="arrow-back" size={24} color="#000" />
-//           </TouchableOpacity>
-
-//           <TouchableOpacity onPress={handleImageUpload} style={styles.uploadArea}>
-//             <Icon name="file-upload" size={48} color="#888" />
-//             <Text style={styles.uploadText}>upload your plant image!</Text>
-//           </TouchableOpacity>
-//           {/* <UplaodImgBlock 
-//             image={""}
-//             pickImage={()=>{}}
-//             script={"uplaod plant image"}
-//           /> */}
-//         </ScrollView>
-//       </TouchableWithoutFeedback>
-//       <InputCard/>
-//     </KeyboardAvoidingView>
-//   );
-// };
-// export default Bookmark;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
