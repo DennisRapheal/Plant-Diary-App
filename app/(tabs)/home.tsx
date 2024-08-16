@@ -16,9 +16,12 @@ import DiaryCard from '../../components/home/DiaryCard';
 import EmptyState from '../../components/home/EmptyState'
 import LogoutBtn from "../../components/home/LogoutBtn";
 import ProfileBtn from "../../components/home/ProfileBtn";
+import sendNotification from 'lib/sendTokens';
 
 const home = () => {
-
+  useEffect (() => {
+    sendNotification(); 
+  }, []);
   const [diaries, setDiaries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
