@@ -9,19 +9,38 @@ import { icons } from "../../constants";
 import LogoutBtn from "../../components/LogoutBtn";
 import ProfileBtn from "../../components/ProfileBtn";
 import { useUserStore } from 'lib/userStore';
-import { db } from 'lib/firebase';
-import { deleteDoc, getDocs, collection, query, where, doc} from 'firebase/firestore';
+import { db, storage } from 'lib/firebase';
+import { deleteDoc, getDocs, collection, query, where, doc, getDoc, updateDoc} from 'firebase/firestore';
 import { auth } from 'lib/firebase';
 import { useGlobalContext } from 'context/GlobalProvider';
 import { useFocusEffect } from '@react-navigation/native';
+import upload from 'lib/storage';
+import { getDownloadURL, ref } from 'firebase/storage';
 
 
 const home = () => {
 
-  const [diaries, setDiaries] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const { user, Loading } = useGlobalContext();
+  const [diaries, setDiaries] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+  const { user, Loading } = useGlobalContext()
+  const [ profileImageUrl, setProfileImageUrl ] = useState(null)
+
+  const handleHeader = async(imageUrl) => {
+    const url = await upload(imageUrl)
+    try {
+      const userRef = doc(db, "users", user.id)
+      const userSnap = updateDoc(userRef, {
+        userImage: url,
+      })
+      console.log("successfully change header image")
+    }catch (error) {
+      console.log(error.message)
+    }
+  }
+
+  console.log(diaries)
+
 
 
   const onDelete = async (docId) => {
@@ -46,19 +65,25 @@ const home = () => {
     router.push(`/(diary)/${diaryid}`)
   }
 
-  const getData = async() => {
+  const getData = async () => {
     try {
-        setLoading(true); 
-        const q = query(collection(db, "diaries"), where("uid", "==", user.id));
-        const querySnapshot = await getDocs(q);
-        const documents = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setDiaries(documents);
+      setLoading(true);
+  
+      const q = query(collection(db, "diaries"), where("uid", "==", user.id));
+      const querySnapshot = await getDocs(q);
+  
+      const documents = await Promise.all(
+        querySnapshot.docs.map((doc) => {
+          return { id: doc.id, ...doc.data() };
+        })
+      );
+      setDiaries(documents);
     } catch (err) {
-        setError(err as Error);
+      setError(err as Error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-  }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -77,7 +102,7 @@ const home = () => {
   return (
     <SafeAreaView className="bg-white" style={{ flex: 1 }}>
       <View className="w-full flex-row justify-between  items-center"  style={{height: "15%" }}> 
-        <ProfileBtn iconUrl = {images.profile} handlePress={() => console.log('Header button pressed')}/>
+        <ProfileBtn iconUrl = {user.userImage} handlePress={handleHeader}/>
         <Text>{user?.username}</Text>
         <LogoutBtn iconUrl = {icons.logout} handlePress={handleLogout}/>
       </View>
