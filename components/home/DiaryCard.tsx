@@ -11,7 +11,9 @@ const DiaryCard = ({title, image, handlePress, onDelete}) => {
       <View style={styles.card} >
         <TouchableOpacity style={styles.content} onPress = {handlePress}>
           <Image 
-            source={{uri: image}}
+            source={{ uri: image }}
+            resizeMode="cover"
+            style={styles.image}
           />
         </TouchableOpacity>
         <View style={styles.footer}>
@@ -49,6 +51,11 @@ const styles = StyleSheet.create({
       elevation: 4,
       shadowOpacity: 1,
       justifyContent: "center",
+    },
+    image: {
+      width: '100%',  // Ensure the image takes up the full width of the container
+      height: '100%',  // Ensure the image takes up the full height of the container
+      borderRadius: 10,
     },
     content: {
         // should be an image 
