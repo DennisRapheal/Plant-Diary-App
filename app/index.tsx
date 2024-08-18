@@ -11,12 +11,17 @@ import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from 'lib/firebase';
 import { useUserStore } from 'lib/userStore';
+import useNotify from 'hooks/useNotify'
 
 const App = () => {
-
+    const { expoPushToken, notification } = useNotify(); 
+    const data = JSON.stringify(notification, undefined, 2);
+    useEffect(() => {
+      console.log("Token: ", expoPushToken?.data ?? "")
+    }, [])
     const { user, isLogged } = useGlobalContext()
     if( isLogged ) return <Redirect href="/home"/>
-    
+
     return (
         <SafeAreaView className="bg-primary h-full">
       {/* <Loader isLoading={loading} /> */}

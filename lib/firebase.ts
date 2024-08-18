@@ -2,7 +2,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getMessaging, getToken, onMessage } from "@react-native-firebase/messaging";
 // import webpush from 'web-push';
 import { getStorage } from "firebase/storage";
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
@@ -32,4 +31,3 @@ export const auth = initializeAuth(app, {
 export const db = getFirestore(app)
 export const storage = getStorage()
 // export const vapidKeys = webpush.generateVAPIDKeys();
-export const messaging = getMessaging(); 
