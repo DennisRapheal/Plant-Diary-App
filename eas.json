@@ -12,15 +12,7 @@
     },
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "android": {
-        "gradleCommand": ":app:assembleDebug"
-      },
-      "ios": {
-        "buildConfiguration": "Debug",
-        "resourceClass": "m1-medium"
-      },
-      "postInstall": "./postinstall.sh"
+      "distribution": "internal"
     },
     "ios-simulator": {
       "extends": "development",
