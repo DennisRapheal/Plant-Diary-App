@@ -7,18 +7,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../constants";
 import CustomButton  from "../components/CustomButton";
 import { useGlobalContext } from "../context/GlobalProvider";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from 'lib/firebase';
 import { useUserStore } from 'lib/userStore';
-import useNotify from 'hooks/useNotify'
+import useNotify from 'hooks/useNotify'; 
 
 const App = () => {
     const { expoPushToken, notification } = useNotify(); 
-    const data = JSON.stringify(notification, undefined, 2);
+    // const data = JSON.stringify(notification, undefined, 2); 
+
     useEffect(() => {
-      console.log("Token: ", expoPushToken?.data ?? "")
+      console.log("Token: ", expoPushToken)
     }, [])
+
     const { user, isLogged } = useGlobalContext()
     if( isLogged ) return <Redirect href="/home"/>
 

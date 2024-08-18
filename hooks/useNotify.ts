@@ -1,94 +1,116 @@
-// npx expo install expo-notifications expo-device expo-constants
+// /hooks/useNotify.ts
 
-import {useState, useEffect, useRef} from "react";
+import { useState, useEffect, useRef } from 'react';
+import { Platform } from 'react-native';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import { collection, addDoc, Timestamp} from 'firebase/firestore';
+import { db } from 'lib/firebase';
 
-import * as Device from "expo-device"; 
-import * as Notifications from "expo-notifications";
+const useNotify = () => {
+  const [expoPushToken, setExpoPushToken] = useState<string>('');
+  const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
+  const notificationListener = useRef<Notifications.Subscription>();
+  const responseListener = useRef<Notifications.Subscription>();
 
-import Constants from "expo-constants";
-import { Platform } from "react-native"; 
-
-export interface PushNotificationState {
-    notification?: Notifications.Notification; 
-    expoPushToken?: Notifications.ExpoPushToken; 
-}
-
-const useNotify = (): PushNotificationState => {
-    Notifications.setNotificationHandler({
-        handleNotification: async () => ({
-            shouldPlaySound: false, 
-            shouldShowAlert: true, 
-            shouldSetBadge: false, 
+  const uploadDeviceToken = async (token, deviceInfo) => {
+    if (token){
+      try{
+        const device_token = await addDoc(collection(db, "device_tokens"), {
+          device_name: deviceInfo.deviceName, 
+          createdAt: Timestamp.now(),
+          token: token,
         })
-    })
-
-    const [expoPushToken, setExpoPushToken] = useState< Notifications.ExpoPushToken | undefined >();
-    const [notification, setNotification] = useState< Notifications.Notification | undefined >();
-
-    const notificationListener = useRef<Notifications.Subscription>(); 
-    const responseListener = useRef<Notifications.Subscription>(); 
-
-    const registerForPushNotificationAsync = async () => {
-        let token; 
-
-        if(Device.isDevice){
-            const {status: existingStatus} = await Notifications.getPermissionsAsync(); 
-
-            let finalStatus = existingStatus; 
-            if (existingStatus !== "granted") {
-                 const { status } = await Notifications.requestPermissionsAsync(); 
-                 finalStatus = status; 
-            }
-
-            if (finalStatus !== "granted") {
-                alert("Failed to get push token ");
-            }
-
-            token = await Notifications.getExpoPushTokenAsync({
-                projectId: Constants.expoConfig?.extra?.eas?.projectId,
-            })
-
-            if (Platform.OS == 'android') {
-                Notifications.setNotificationChannelAsync("default", {
-                    name: "default", 
-                    importance: Notifications.AndroidImportance.MAX, 
-                });
-            }
-
-            return token; 
-        } else {
-            console.log("Error, use physical device");
-        }
-
-        useEffect (() => {
-            registerForPushNotificationAsync().then((token) => {
-                setExpoPushToken(token);
-            })
-            
-            notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
-                setNotification(notification);
-            })
-
-            responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-                console.log(response); 
-            })
-
-            return () => {
-                Notifications.removeNotificationSubscription(
-                    notificationListener.current!
-                );
-
-                Notifications.removeNotificationSubscription(
-                    responseListener.current!
-                );
-            }
-        }, [])
+        console.log('device_name: ', device_token.device_name);
+        console.log('device_token: ', device_token.token);
+      } catch (err) {
+        console.log('setWaterCard', err);
+      }
     }
+  }
 
-    return { expoPushToken, notification }
+  const getDeviceInfo = async () => {
+    const info = await {
+      brand: Device.brand,
+      manufacturer: Device.manufacturer,
+      modelName: Device.modelName,
+      osName: Device.osName,
+      osVersion: Device.osVersion,
+      osBuildId: Device.osBuildId,
+      deviceName: await Device.deviceName,
+    };
+    return info; 
+  };
 
-}
+  useEffect(() => {
+    const handleRegistrationError = (errorMessage: string) => {
+      alert(errorMessage);
+      throw new Error(errorMessage);
+    };
 
-export default useNotify; 
+    const registerForPushNotificationsAsync = async () => {
+      if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F7C',
+        });
+      }
 
+      if (Device.isDevice) {
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== 'granted') {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
+        }
+        if (finalStatus !== 'granted') {
+          handleRegistrationError('Permission not granted to get push token for push notification!');
+          return;
+        }
+        const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+        if (!projectId) {
+          handleRegistrationError('Project ID not found');
+        }
+        try {
+          const pushTokenString = (
+            await Notifications.getExpoPushTokenAsync({
+              projectId,
+            })
+          ).data;
 
+          setExpoPushToken(pushTokenString);
+          console.log("Token: ", pushTokenString)
+          const info = await getDeviceInfo();
+          uploadDeviceToken(pushTokenString, info); 
+
+        } catch (e: unknown) {
+          handleRegistrationError(`${e}`);
+        }
+      } else {
+        handleRegistrationError('Must use physical device for push notifications');
+      }
+    };
+
+    registerForPushNotificationsAsync();
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+    return () => {
+      notificationListener.current && Notifications.removeNotificationSubscription(notificationListener.current);
+      responseListener.current && Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  return { expoPushToken, notification };
+};
+
+export default useNotify;
