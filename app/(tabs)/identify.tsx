@@ -87,6 +87,17 @@ const identify = () => {
   };
 
   const takePhotoWithCamera = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permission Required',
+        'Sorry, we need camera permissions to make this work!',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+    
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],

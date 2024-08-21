@@ -31,6 +31,15 @@ export default function App() {
     const { diaryId } = useGlobalSearchParams()
     const diaryIdString = diaryId?.toString()
     
+    const data = [
+      { key: 'empty-left' },
+      { key: {diaryIdString}, type: 'settings' },
+      { key: '1', date: '2024 8/5', nextDate: '2024 8/15', height: 10, note: 'blah blah blah blah.'},
+      { key: '2', date: '2024 8/6', nextDate: '2024 8/16', height: 12, note: 'another note' },
+      { key: '3', date: '2024 8/7', nextDate: '2024 8/17', height: 15, note: 'yet another note' },
+      { key: 'empty-right' },
+    ];
+  
     const handleScroll = (event) => {
       const scrollPosition = event.nativeEvent.contentOffset.x;
       const index = Math.round(scrollPosition / ITEM_WIDTH);

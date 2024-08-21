@@ -5,14 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack } from 'expo-router';
 import { images } from "../../constants";
 import { icons } from "../../constants";
-import { useUserStore } from 'lib/userStore';
-import { db, storage } from 'lib/firebase';
-import { deleteDoc, getDocs, collection, query, where, doc, getDoc, updateDoc} from 'firebase/firestore';
+import upload from 'lib/storage';
+import { db } from 'lib/firebase';
+import { deleteDoc, getDocs, collection, query, where, doc, updateDoc} from 'firebase/firestore';
 import { auth } from 'lib/firebase';
 import { useGlobalContext } from 'context/GlobalProvider';
 import { useFocusEffect } from '@react-navigation/native';
-import upload from 'lib/storage';
-import { getDownloadURL, ref } from 'firebase/storage';
 
 import DiaryCard from '../../components/home/DiaryCard';
 import EmptyState from '../../components/home/EmptyState'
@@ -30,7 +28,6 @@ const home = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const { user, Loading } = useGlobalContext()
-  const [ profileImageUrl, setProfileImageUrl ] = useState(null)
 
   const notificationPermissions = async () => {
     console.log('Requesting permission...');
@@ -46,29 +43,7 @@ const home = () => {
     }
   }
 
-  const functionsTest = async () => {
-    try { 
-      const response = await axios.get('http://127.0.0.1:5001/plant-diary-357fb/us-central1/helloWorld')
-      if(!response.ok) {
-        throw new Error('shit man')
-      }
-    }catch (error){
-      console.error('Error calling function:', error);
-    }
-  }
-
-  const handleHeader = async(imageUrl) => {
-    const url = await upload(imageUrl)
-    try {
-      const userRef = doc(db, "users", user.id)
-      const userSnap = updateDoc(userRef, {
-        userImage: url,
-      })
-      console.log("successfully change header image")
-    }catch (error) {
-      console.log(error.message)
-    }
-  }
+  const [profileImg, setProfileImg] = useState(user.startingImage ? user.startingImage : images.profile);
 
   const onDelete = async (docId) => {
     try {
@@ -92,29 +67,32 @@ const home = () => {
     router.push(`/(diary)/${diaryid}`)
   }
 
-  const getData = async () => {
+  const getData = async() => {
     try {
-      setLoading(true);
-  
-      const q = query(collection(db, "diaries"), where("uid", "==", user.id));
-      const querySnapshot = await getDocs(q);
-  
-      const documents = await Promise.all(
-        querySnapshot.docs.map((doc) => {
-          return { id: doc.id, ...doc.data() };
-        })
-      );
-      setDiaries(documents);
+        setLoading(true); 
+        const q = query(collection(db, "diaries"), where("uid", "==", user.id));
+        const querySnapshot = await getDocs(q);
+        const documents = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        const p = query(collection(db, "users"), where("id", "==", user.id));
+        const querySnapshot2 = await getDocs(p);
+        const documents2 = querySnapshot2.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        setDiaries(documents);
+        if (documents2.length > 0) {
+          setProfileImg(documents2[0].profileImg); // Assuming profileImg is a field in the user document
+        } else {
+          console.log("No user profile found.");
+        }
     } catch (err) {
-      setError(err as Error);
+        setError(err as Error);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+  }
 
   useFocusEffect(
     React.useCallback(() => {
-      functionsTest()
       notificationPermissions()
       getData();
     }, [])
@@ -126,11 +104,37 @@ const home = () => {
     auth.signOut()
   };
 
+  const changeProfile = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      console.log("re"); 
+      setProfileImg(result.assets[0].uri);
+    }
+
+    const imgUrl = await upload(profileImg)
+    console.log(imgUrl)
+    try{
+      const docRef = doc(db, 'users', user.id);
+      await updateDoc(docRef, {
+        // createdAt: Date.now().toString(),
+        profileImg: profileImg, 
+      })
+      console.log('doc is revised')
+    } catch (err) {
+      console.log('setWaterCard', err);
+    } 
+  }
 
   return (
     <SafeAreaView className="bg-white" style={{ flex: 1 }}>
       <View className="w-full flex-row justify-between  items-center"  style={{height: "15%" }}> 
-        <ProfileBtn iconUrl = {user.userImage} handlePress={handleHeader}/>
+        <ProfileBtn iconUrl = {profileImg} handlePress={changeProfile}/>
         <Text>{user?.username}</Text>
         <LogoutBtn iconUrl = {icons.logout} handlePress={handleLogout}/>
       </View>

@@ -23,11 +23,14 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
 export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
 
 export const db = getFirestore(app)
 export const storage = getStorage()
+<<<<<<< HEAD
 // export const messaging = getMessaging(app);
+=======
+// export const vapidKeys = webpush.generateVAPIDKeys();
+>>>>>>> 167b7e391dbb04fb880e3939941d9ba5da2d6cfb
