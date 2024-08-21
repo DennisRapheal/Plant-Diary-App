@@ -20,10 +20,6 @@
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-community/slider": "^4.5.2",
     "@react-native-firebase/app": "^20.4.0",
-<<<<<<< HEAD
-    "@react-native-firebase/messaging": "^20.4.0",
-=======
->>>>>>> 167b7e391dbb04fb880e3939941d9ba5da2d6cfb
     "@react-navigation/native": "^6.0.2",
     "admin": "^1.4.1",
     "axios": "^1.7.3",
@@ -38,13 +34,8 @@
     "expo-font": "~12.0.9",
     "expo-image-picker": "~15.0.7",
     "expo-linking": "~6.3.1",
-<<<<<<< HEAD
-    "expo-notifications": "^0.28.15",
-    "expo-router": "^3.5.21",
-=======
     "expo-notifications": "~0.28.15",
     "expo-router": "~3.5.23",
->>>>>>> 167b7e391dbb04fb880e3939941d9ba5da2d6cfb
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
