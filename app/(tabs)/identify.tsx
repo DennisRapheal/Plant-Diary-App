@@ -33,7 +33,7 @@ const identify = () => {
         throw err;
       }
     };
-    
+
     if (image != null) {
       try{
         setIsLoading(true)
