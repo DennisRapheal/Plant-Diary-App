@@ -7,6 +7,7 @@ import React from 'react';
 import upload from 'lib/storage';
 import { setDoc, doc, collection, addDoc } from 'firebase/firestore';
 import { db } from 'lib/firebase';
+import { Timestamp } from '@google-cloud/firestore';
 
 const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, user, image}) => {
   const [plantName, setPlantName] = useState('');
@@ -23,7 +24,7 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
       setIsAdding(true)
       await addDoc(collection(db, "diaries"), {
         uid: user.id,
-        createdAt: Date.now().toLocaleString(), // need to be reconverted to date type 
+        createdAt: Timestamp.now(), // need to be reconverted to date type 
         plantName: plantName,
         plantType: plantType,
         wateringFrequency: wateringFrequency,
@@ -36,20 +37,20 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
     } finally {
       setIsAdding(false)
     }
-    router.replace('/home')
+    router.push('/(tabs)/home')
   };  
 
-    useEffect(() => {
-        if(identifyPlantName != ""){
-            setPlantName(identifyPlantName);
-        }
-        if(identifyPlantType != ""){
-            setPlantType(identifyPlantType);
-        }
-        if(identifyWater != ""){
-            setWateringFrequency(identifyWater);
-        }
-    }, [identifyPlantName, identifyPlantType, identifyWater]);
+  useEffect(() => {
+      if(identifyPlantName != ""){
+          setPlantName(identifyPlantName);
+      }
+      if(identifyPlantType != ""){
+          setPlantType(identifyPlantType);
+      }
+      if(identifyWater != ""){
+          setWateringFrequency(identifyWater);
+      }
+  }, [identifyPlantName, identifyPlantType, identifyWater]);
 
   return (
     <>

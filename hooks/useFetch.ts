@@ -37,44 +37,44 @@ const useFetch = (imagePath) => {
     }
   };
 
-    const fetchData = async () => {
-        setIsLoading(true);
-        try {
-            if (!imagePath) {
-                throw new Error('Image path is not set.');
-            }
-        // const pathPrefix = await getPrefix(imagePath)
-        const fileInfo = await FileSystem.getInfoAsync(imagePath);
-        const form = new FormData();
-        form.append('images', {
-          uri: imagePath,
-          type: getMimeType(fileInfo.uri), // Get MIME type from file extension or content
-          name: fileInfo.uri.split('/').pop(), // Use the file name from URI
-        });
-        const url = 'https://my-api.plantnet.org/v2/identify/all' + '?api-key=' + ApiKey
-        const response = await axios.post(url, form , {
-          params: {
-              'include-related-images': 'false',
-              'no-reject': 'false',
-              'nb-results': '3',
-              'lang': 'en',
-              'type': 'kt',
-          },
-          headers: {
-              'Content-Type': 'multipart/form-data',
+  const fetchData = async () => {
+      setIsLoading(true);
+      try {
+          if (!imagePath) {
+              throw new Error('Image path is not set.');
           }
-        });
-
-            setData(response.data);
-            console.log('Success:', response.data);
-        // return { data, isLoading, error };
-        } catch (err) {
-            console.error('Error fetching data:', err);
-            setError(err as Error);
-        } finally {
-            setIsLoading(false);
+      // const pathPrefix = await getPrefix(imagePath)
+      const fileInfo = await FileSystem.getInfoAsync(imagePath);
+      const form = new FormData();
+      form.append('images', {
+        uri: imagePath,
+        type: getMimeType(fileInfo.uri), // Get MIME type from file extension or content
+        name: fileInfo.uri.split('/').pop(), // Use the file name from URI
+      });
+      const url = 'https://my-api.plantnet.org/v2/identify/all' + '?api-key=' + ApiKey
+      const response = await axios.post(url, form , {
+        params: {
+            'include-related-images': 'false',
+            'no-reject': 'false',
+            'nb-results': '3',
+            'lang': 'en',
+            'type': 'kt',
+        },
+        headers: {
+            'Content-Type': 'multipart/form-data',
         }
-    };
+      });
+
+          setData(response.data);
+          console.log('Success:', response.data);
+      // return { data, isLoading, error };
+      } catch (err) {
+          console.error('Error fetching data:', err);
+          setError(err as Error);
+      } finally {
+          setIsLoading(false);
+      }
+  };
 
   useEffect(() => {
     fetchData();

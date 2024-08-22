@@ -14,6 +14,7 @@ import { useUserStore } from 'lib/userStore';
 import useNotify from 'hooks/useNotify'; 
 
 const App = () => {
+    const { user, isLogged } = useGlobalContext()
     const { expoPushToken, notification } = useNotify(); 
     // const data = JSON.stringify(notification, undefined, 2); 
 
@@ -21,7 +22,6 @@ const App = () => {
       console.log("Token: ", expoPushToken)
     }, [])
 
-    const { user, isLogged } = useGlobalContext()
     if( isLogged ) return <Redirect href="/home"/>
 
     return (

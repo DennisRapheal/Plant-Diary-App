@@ -63,7 +63,7 @@ const identify = () => {
       } catch (err){
         console.error(err);
       } finally {
-        setIsLoading(true)
+        setIsLoading(false)
       }
     } else {
       Alert.alert('Oops...', 'No image is selected. ')

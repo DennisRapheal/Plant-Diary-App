@@ -2,7 +2,7 @@ import { View, Text, ScrollView, Alert, StyleSheet, ActivityIndicator} from 'rea
 import { useState, useEffect} from 'react'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useRouter, useLocalSearchParams} from 'expo-router';
+import { useRouter, useLocalSearchParams, router} from 'expo-router';
 import useFetch from '../../hooks/useFetch';
 import PlantInfo from '../../components/PlantInfo';
 import DiarySettings from '../../components/DiarySettings';
@@ -41,6 +41,7 @@ const result = () => {
       setImage(temp.startingImage);
     } else {
       Alert.alert('Oops...', 'This image is probably not a plant!!!')
+      router.replace('/(tabs)/identify')
     }
   }, []);
 
@@ -49,7 +50,7 @@ const result = () => {
       <Text style={styles.title}>We Find Your Plant!</Text>
       <View style={styles.infoContainer}>
         <ScrollView>
-          <Text className='text-2xl'>This is a {percent} {plantName} {'\n'}</Text>
+          <Text className='text-2xl'>This is a {'\n'} {percent} {'\n'} {plantName} {'\n'}</Text>
           <Text>{details}</Text>
        </ScrollView>
       </View>

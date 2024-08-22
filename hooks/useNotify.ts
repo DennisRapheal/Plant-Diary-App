@@ -7,8 +7,10 @@ import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import { collection, addDoc, Timestamp} from 'firebase/firestore';
 import { db } from 'lib/firebase';
+import { useGlobalContext } from 'context/GlobalProvider';
 
 const useNotify = () => {
+  const { user, isLogged } = useGlobalContext()
   const [expoPushToken, setExpoPushToken] = useState<string>('');
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
   const notificationListener = useRef<Notifications.Subscription>();
@@ -18,10 +20,12 @@ const useNotify = () => {
     if (token){
       try{
         const device_token = await addDoc(collection(db, "device_tokens"), {
+          uid: user.id, 
           device_name: deviceInfo.deviceName, 
           createdAt: Timestamp.now(),
           token: token,
         })
+        console.log('uid: ', device_token.uid);
         console.log('device_name: ', device_token.device_name);
         console.log('device_token: ', device_token.token);
       } catch (err) {

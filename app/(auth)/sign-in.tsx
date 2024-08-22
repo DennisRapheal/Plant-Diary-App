@@ -29,6 +29,7 @@ const SignIn = () => {
             .then((userCredential) => {
               // Signed in
               const user = userCredential.user;
+              
               user.getIdToken().then(async (idToken) => {
                 await setDoc(doc(db, "tokens", user.uid), {
                   uid: user.uid,
