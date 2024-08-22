@@ -1,17 +1,36 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true,
+    "target": "es6", // Consider using a higher target
+    "lib": ["dom", "es2015"],
+    "jsx": "react",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true, // Keep strict mode, but you can toggle to false if necessary
+    "noImplicitAny": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+      "@/*": ["./*"],
+      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
+    },
+    "types": ["nativewind/types"],
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-  ]
+    "expo-env.d.ts",
+    "app/_layout.jsx",
+    "app/Search/[query].jsx",
+    "app/(tabs)/profile.tsx",
+    "app/(tabs)/home.tsx",
+    "app/(tabs)/create.tsx",
+    "app/(tabs)/Bookmark.tsx",
+    "app/(tabs)/_layout.tsx",
+    "app/index.jsx"
+, "context/GlobalProvider.ts", "app/(setWaterCard)", "lib/sendTokens.js"  ]
 }
