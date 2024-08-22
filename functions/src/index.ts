@@ -19,6 +19,10 @@ const resetToMidnight = (date: Date) => {
 const toSendOrNotToSend = (interval: number, createdAt: Timestamp) => {
   const now = new Date();
   const today = resetToMidnight(now);
+  if (!createdAt || typeof createdAt.toDate !== "function") {
+    console.error("createdAt is missing or invalid.");
+    return false; // Skip this record if createdAt is not valid
+  }
 
   // Convert Firestore timestamp to JavaScript Date object
   const createdAtDate = createdAt.toDate();
@@ -30,7 +34,7 @@ const toSendOrNotToSend = (interval: number, createdAt: Timestamp) => {
 
 // Cron job to run every hour
 export const sendScheduledNotifications = functions.pubsub
-  .schedule("every 1 hours")
+  .schedule("every 10 minutes")
   .onRun(async () => {
     const Testmessage = {
       to: "ExponentPushToken[7ixQqJNuhY0IrTD7eiRJ0J]",
