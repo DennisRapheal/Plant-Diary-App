@@ -2,7 +2,7 @@ import { Link, router, useFocusEffect, useGlobalSearchParams, useLocalSearchPara
 import React, { useState, useRef, useEffect } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Switch, Dimensions, Animated, TouchableOpacity, Image, ActivityIndicator} from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { setDoc, doc, collection, addDoc, getDocs, query, where, getDoc, onSnapshot} from 'firebase/firestore';
+import { setDoc, doc, collection, addDoc, getDocs, query, where, getDoc, onSnapshot, Timestamp} from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
@@ -10,6 +10,8 @@ import AddDiaryBtn from '@/components/addButton/AddDiaryBtn';
 import DiarySetting from '@/components/SettingField/DiarySetting';
 import { isLoading } from 'expo-font';
 import WaterCard from '../../components/WaterCard';
+import LoadingScreen from '@/components/Loading/Loading';
+import { create } from 'zustand';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = 250;
@@ -31,15 +33,6 @@ export default function App() {
     const { diaryId } = useGlobalSearchParams()
     const diaryIdString = diaryId?.toString()
     
-    const data = [
-      { key: 'empty-left' },
-      { key: {diaryIdString}, type: 'settings' },
-      { key: '1', date: '2024 8/5', nextDate: '2024 8/15', height: 10, note: 'blah blah blah blah.'},
-      { key: '2', date: '2024 8/6', nextDate: '2024 8/16', height: 12, note: 'another note' },
-      { key: '3', date: '2024 8/7', nextDate: '2024 8/17', height: 15, note: 'yet another note' },
-      { key: 'empty-right' },
-    ];
-  
     const handleScroll = (event) => {
       const scrollPosition = event.nativeEvent.contentOffset.x;
       const index = Math.round(scrollPosition / ITEM_WIDTH);
@@ -47,24 +40,6 @@ export default function App() {
     };
 
     const { user } = useGlobalContext()
-
-    useEffect(() => {
-      if(cards){
-        const transformedData = [
-          { key: 'empty-left' },
-          { key: diaryIdString, type: 'settings' },
-          ...cards.map(doc => ({
-            key: doc.id, 
-            date: doc.date,
-            height: doc.height,
-            note: doc.note
-          })),
-          { key: 'empty-right' },
-        ];
-
-        setCardData(transformedData)
-    }
-    }, [cards])
 
     const fetch_data = async() => {
       try{
@@ -76,48 +51,69 @@ export default function App() {
       }
     }
 
-    console.log(cardData)
+    useEffect(() => {
+      if(cards){
+        setIsLoading(true)
+        try{
+          const transformedData = [
+            { key: 'empty-left' },
+            { key: diaryIdString, type: 'settings' },
+            ...cards.map(doc => ({
+              key: doc.id, 
+              date: doc.date,
+              height: doc.height,
+              note: doc.note
+            })),
+            { key: 'empty-right' },
+          ];
+
+          setCardData(transformedData)
+        }catch(e){
+          console.error(e)
+        }finally{
+          setIsLoading(false)
+        }
+    }
+    }, [cards])
+
+
 
     useFocusEffect(
       React.useCallback(
       () => {
-      const unSub = onSnapshot(doc(db, "diaries", diaryIdString), async(res) => {
-        const items = res.data().wateringRecords
-        const promises = items.map(async (item) => {
-          const waterCardRef = doc(db, "watercards", item)
-          const waterCard = (await getDoc(waterCardRef)).data()
-          const waterCardData = { ...waterCard, id: item}
-          return waterCardData
+        setIsLoading(true)
+        fetch_data()
+        const unSub = onSnapshot(doc(db, "diaries", diaryIdString), async(res) => {
+          const items = res.data().wateringRecords
+          const promises = items.map(async (item) => {
+            const waterCardRef = doc(db, "watercards", item)
+            const waterCard = (await getDoc(waterCardRef)).data()
+            const waterCardData = { ...waterCard, id: item}
+            return waterCardData
+          })
+
+          const cardsData = await Promise.all(promises) 
+          setCards(cardsData)
+          setIsLoading(false)
         })
-
-        const cardsData = await Promise.all(promises) 
-        setCards(cardsData)
-      })
-
-      return () => {
-        unSub()
-      }
+        return () => {
+          unSub()
+        }
     }, []))
 
-
-    useFocusEffect(
-      React.useCallback(() => {
-        setIsLoading(true)
-        try{
-          fetch_data()
-          // console.log(diary)
-        }catch(e){
-          console.log(e.message)
-        }finally{
-          setIsLoading(false)
-        }
-      }, [])
-    );
+    const Days = (createdAt) => {
+      if(!createdAt) return 0
+      const createdAtDate = createdAt.toDate()
+      const today = new Date()
+      const diffInMilliseconds: number = today.getTime() - createdAtDate.getTime()
+      const diffInDays = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24));
+      return diffInDays
+    }
   
     return (
       <SafeAreaView style={styles.container}>
         <View className='flex-1'>
-          { isLoading ? (<ActivityIndicator/>) : (
+          { isLoading ? (<LoadingScreen/>) : (
             <>
           <Animated.FlatList
             data={cardData}
@@ -153,13 +149,13 @@ export default function App() {
         </>)}
 
           { <View style={styles.infoCard}>
-            <Text style={styles.PlantName}>{cards?.plantName}</Text>
-            <Text style={styles.days}>23 Days</Text>
-            <Text style={styles.plantType}>{cards?.plantType}</Text>
-            <Text style={styles.wateringInfo}> {`Day left to water: ${cards?.createdAt} days`}</Text>
+            <Text style={styles.PlantName}>{diary?.plantName}</Text>
+            <Text style={styles.days}>{`Day ${Days(diary?.createdAt)}`}</Text>
+            <Text style={styles.plantType}>{diary?.plantType}</Text>
+            <Text style={styles.wateringInfo}> {`Day left to water: ${diary?.createdAt.toDate()} days`}</Text>
             <View style={styles.reminderRow}>
               <Text style={styles.reminderText}>Watering Reminder:</Text>
-              <Switch value={switchValue} onValueChange={handleSwitch} />
+              <Switch value={diary?.waterReminder} onValueChange={handleSwitch} />
             </View>
             <AddDiaryBtn title = "add watering record" handlePress={() => { console.log('diaryId: ', diaryId); router.push(`/(addWaterCard)/${diaryId}`)}} isLoading={false}/>
           </View> }

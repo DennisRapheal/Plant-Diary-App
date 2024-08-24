@@ -34,21 +34,12 @@ const toSendOrNotToSend = (interval: number, createdAt: Timestamp) => {
 
 // Cron job to run every hour
 export const sendScheduledNotifications = functions.pubsub
-  .schedule("every 10 minutes")
+  .schedule("every 30 minutes")
   .onRun(async () => {
-    const Testmessage = {
-      to: "ExponentPushToken[7ixQqJNuhY0IrTD7eiRJ0J]",
-      sound: "default",
-      title: "Test message ⚠️",
-      body: "Save your career with something fun.",
-    };
-    sendPushNotifications(Testmessage);
     const db = admin.firestore();
     try {
       const diaryQuery = db.collection("diaries")
-        .where("waterReminder", "==", true)
-        .where("wateringFrequency", "!=", 0);
-
+        .where("waterReminder", "==", true);
       const diariesSnapshot = await diaryQuery.get();
 
       if (diariesSnapshot.empty) {
@@ -58,10 +49,30 @@ export const sendScheduledNotifications = functions.pubsub
       for (const diaryDoc of diariesSnapshot.docs) {
         const diaryData = diaryDoc.data();
         const wateringRecords = diaryData.wateringRecords || [];
+        const createdAt = diaryData?.createdAt;
+        if (!createdAt || typeof createdAt.toDate !== "function") {
+          console.log(`Processing diary: ${diaryDoc.id}`, diaryData);
+          continue;
+        }
 
-        if (wateringRecords.length === 0) {
+        // eslint-disable-next-line max-len
+        const latestWateringRecord = wateringRecords[wateringRecords.length - 1];
+        let LatestWaterCardData;
+        for (const wateringRecord of wateringRecords) {
+          const WaterCardRef = db.collection("watercards").doc(wateringRecord);
           // eslint-disable-next-line max-len
-          if (toSendOrNotToSend(diaryData.wateringFrequency, diaryData.createdAt)) {
+          const WaterCardSnapshot = await WaterCardRef.get(); // Await the document fetch
+          // eslint-disable-next-line max-len
+          const WaterCardData = WaterCardSnapshot.data(); // Extract data from the document
+
+          if (WaterCardData?.watered) {
+            LatestWaterCardData = WaterCardData;
+            break; // Exit the loop if the plant has already been watered
+          }
+        }
+        if (wateringRecords.length === 0 || !LatestWaterCardData) {
+          // eslint-disable-next-line max-len
+          if (toSendOrNotToSend(diaryData.wateringFrequency, diaryData?.createdAt)) {
             const tokenDocRef = db.collection("device_tokens")
               .doc(diaryData.uid);
             const tokenDoc = await tokenDocRef.get();
@@ -74,11 +85,16 @@ export const sendScheduledNotifications = functions.pubsub
             };
             await sendPushNotifications(message);
           }
+          continue;
+        }
+        const wateringCardTime = LatestWaterCardData?.createdAt;
+        // eslint-disable-next-line max-len
+        if (!wateringCardTime || typeof wateringCardTime.toDate !== "function") {
+          console.log(`Processing waterCard: ${latestWateringRecord}`);
+          continue;
         }
         // eslint-disable-next-line max-len
-        const latestWateringRecord = wateringRecords[wateringRecords.length - 1];
-        // eslint-disable-next-line max-len
-        if (toSendOrNotToSend(diaryData.wateringFrequency, latestWateringRecord.createdAt)) {
+        if (toSendOrNotToSend(diaryData.wateringFrequency, latestWateringRecord?.createdAt)) {
           const tokenDocRef = db.collection("device_tokens").doc(diaryData.uid);
           const tokenDoc = await tokenDocRef.get();
           const tokenData = tokenDoc.data();

@@ -21,7 +21,8 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import useNotify from '@/hooks/useNotify';
 import { deviceName } from 'expo-device';
-
+import { isLoading } from 'expo-font';
+import LoadingScreen from '@/components/Loading/Loading';
 const home = () => {
 
   const [diaries, setDiaries] = useState([])
@@ -31,8 +32,6 @@ const home = () => {
 
   const { expoPushToken, notification } = useNotify(); 
   const data = JSON.stringify(notification, undefined, 2);
-
-
 
   useEffect(() => {
     const updateToken = async() => {
@@ -52,7 +51,6 @@ const home = () => {
 
   async function registerForPushNotificationsAsync() {
     let token;
-  
     if (Platform.OS === 'ios') {
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
@@ -110,7 +108,7 @@ const home = () => {
 
         setDiaries(documents);
         if (documents2.length > 0) {
-          setProfileImg(documents2[0].profileImg); // Assuming profileImg is a field in the user document
+          setProfileImg(documents2[0].profileImg);
         } else {
           console.log("No user profile found.");
         }
@@ -123,7 +121,6 @@ const home = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      // notificationPermissions()
       getData();
     }, [])
   );
@@ -161,6 +158,9 @@ const home = () => {
     } 
   }
 
+  if(loading){
+    return <LoadingScreen/>
+  }
   return (
     <SafeAreaView className="bg-white" style={{ flex: 1 }}>
       <View className="w-full flex-row justify-between  items-center"  style={{height: "15%" }}> 
