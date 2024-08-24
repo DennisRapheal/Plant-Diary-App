@@ -28,7 +28,7 @@ const WaterCard = ({ item, index, scrollX, width}) => {
     if (item.type === 'settings') {
         const { diaryIdString } = item.key
         return (
-          <TouchableOpacity onPress={() => {router.push(`/(diarySetting)/${diaryIdString}`)}}>
+          <TouchableOpacity onPress={() => {router.push(`/(diarySetting)/${item.key}`)}}>
             <Animated.View
               style={[
                 styles.card,

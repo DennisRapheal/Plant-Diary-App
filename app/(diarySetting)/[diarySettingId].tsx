@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Switch, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Switch, ScrollView, ImageComponent } from 'react-native';
 import Slider from '@react-native-community/slider';
 import DiarySetting from '@/components/SettingField/DiarySetting';
 import { useLocalSearchParams } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import UplaodImgBlock from '@/components/UplaodImgBlock';
+import LoadingScreen from '@/components/Loading/Loading';
 
 const PlantInfo = () => {
   const [plantName, setPlantName] = useState('');
@@ -13,6 +15,7 @@ const PlantInfo = () => {
   const [wateringInterval, setWateringInterval] = useState(0);
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [diary, setdiary] = useState(null)
+  const [ImageUrl, setImageUrl] = useState("")
 
   const { diarySettingId } = useLocalSearchParams()
   const diaryId = diarySettingId.toString()
@@ -37,10 +40,12 @@ const PlantInfo = () => {
       const diaryRef = doc(db, "diaries", diaryId)
       const diary = (await getDoc(diaryRef)).data()
       setdiary(diary)
+      setImageUrl(diary.startingImage)
     }catch(err){
       console.log(err)
     }
   }
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -54,24 +59,17 @@ const PlantInfo = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <TouchableOpacity style={styles.backButton}>
-        <Text style={styles.backButtonText}>←</Text>
-      </TouchableOpacity>
+
       
       <Text style={styles.title}>Plant Info.</Text>
       
       <View style={styles.imageContainer}>
-        {[1, 2, 3].map((item) => (
-          <View key={item} style={styles.imageWrapper}>
-            {/* <Image
-              source={require('./path-to-your-plant-image.png')}
-              style={styles.plantImage}
-            /> */}
-            <View style={styles.tagContainer}>
-              <Text style={styles.tagText}>organ</Text>
-            </View>
-          </View>
-        ))}
+        { ImageUrl ? <Image 
+          source={{ uri: ImageUrl }}  // 'Image' here is the URL or source
+          style={styles.plantImage}
+          resizeMode='cover'  // Apply resizeMode as a separate prop
+        /> : <LoadingScreen/>}
+        
       </View>
       <DiarySetting addToDiary={()=>{console.log("setdiary")}} btntitle = "submit" diary = {diary} onSubmit={onSubmit}/>      
     </ScrollView>
@@ -100,17 +98,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   imageContainer: {
-    flexDirection: 'row',
+    height: 250,
+    display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 20,
+  },
+  plantImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover'
   },
   imageWrapper: {
     alignItems: 'center',
-  },
-  plantImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
   },
   tagContainer: {
     backgroundColor: '#6B7A5D',
