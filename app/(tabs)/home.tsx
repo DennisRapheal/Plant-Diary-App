@@ -20,7 +20,6 @@ import ProfileBtn from "../../components/home/ProfileBtn";
 const home = () => {
   const [diaries, setDiaries] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
   const { user, Loading } = useGlobalContext();
   const [profileImg, setProfileImg] = useState(user.startingImage ? user.startingImage : images.profile);
 
@@ -93,7 +92,6 @@ const home = () => {
     });
 
     if (!result.canceled) {
-      console.log("re"); 
       setProfileImg(result.assets[0].uri);
     }
 

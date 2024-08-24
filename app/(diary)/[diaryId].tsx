@@ -30,15 +30,6 @@ export default function App() {
     }
     const { diaryId } = useGlobalSearchParams()
     const diaryIdString = diaryId?.toString()
-    
-    const data = [
-      { key: 'empty-left' },
-      { key: {diaryIdString}, type: 'settings' },
-      { key: '1', date: '2024 8/5', nextDate: '2024 8/15', height: 10, note: 'blah blah blah blah.'},
-      { key: '2', date: '2024 8/6', nextDate: '2024 8/16', height: 12, note: 'another note' },
-      { key: '3', date: '2024 8/7', nextDate: '2024 8/17', height: 15, note: 'yet another note' },
-      { key: 'empty-right' },
-    ];
   
     const handleScroll = (event) => {
       const scrollPosition = event.nativeEvent.contentOffset.x;
@@ -81,6 +72,7 @@ export default function App() {
     useFocusEffect(
       React.useCallback(
       () => {
+      setIsLoading(true)
       const unSub = onSnapshot(doc(db, "diaries", diaryIdString), async(res) => {
         const items = res.data().wateringRecords
         const promises = items.map(async (item) => {
@@ -92,6 +84,7 @@ export default function App() {
 
         const cardsData = await Promise.all(promises) 
         setCards(cardsData)
+        setIsLoading(false)
       })
 
       return () => {
@@ -161,7 +154,11 @@ export default function App() {
               <Text style={styles.reminderText}>Watering Reminder:</Text>
               <Switch value={switchValue} onValueChange={handleSwitch} />
             </View>
-            <AddDiaryBtn title = "add watering record" handlePress={() => { console.log('diaryId: ', diaryId); router.push(`/(addWaterCard)/${diaryId}`)}} isLoading={false}/>
+            <AddDiaryBtn 
+              title = "add watering record" 
+              handlePress={() => { console.log('diaryId: ', diaryId); router.push(`/(addWaterCard)/${diaryId}`)}} 
+              isLoading={false}
+            />
           </View> }
 
         </View>
@@ -235,10 +232,9 @@ const styles = StyleSheet.create({
     },
     infoCard: {
         width: '90%',
-        padding: 20,
+        padding:16,
         backgroundColor: '#F5F5F5',
         borderRadius: 10,
-        alignItems: 'center',
         marginBottom: 20,
         alignSelf: 'center',
     },
@@ -246,25 +242,30 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: '#6B7969',
         marginBottom: 10,
+        textAlign: 'center',
     },
     days: {
         fontSize: 20,
         color: '#6B7969',
         marginBottom: 10,
+        textAlign: 'center',
     },
     plantType: {
         fontSize: 18,
         color: '#6B7969',
         marginBottom: 10,
+        textAlign: 'center',
     },
     wateringInfo: {
         fontSize: 16,
         color: '#6B7969',
         marginBottom: 10,
+        textAlign: 'center',
     },
     reminderRow: {
         flexDirection: 'row',
         alignItems: 'center',
+        alignSelf: 'center',
         marginBottom: 10,
     },
     reminderText: {

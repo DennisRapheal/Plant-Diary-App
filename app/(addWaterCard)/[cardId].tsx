@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { useLocalSearchParams, router} from 'expo-router';
-import { View, Text, TouchableOpacity, TextInput, Switch, Alert, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { View, Text, TextInput, Switch, Alert, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import UplaodImgBlock from 'components/UplaodImgBlock';
 import AddDiaryBtn from 'components/AddDiaryBtn';
-import { setDoc, doc, collection, addDoc , query, where, getDocs, updateDoc, arrayUnion, Timestamp} from 'firebase/firestore';
+import { doc, collection, addDoc, updateDoc, arrayUnion, Timestamp} from 'firebase/firestore';
 import { db } from 'lib/firebase';
 import upload from 'lib/storage';
 
@@ -36,10 +34,10 @@ const InputCard = () => {
   };
 
   const addWaterCard = async () => {
+    setIsLoading(true)
     const imgUrl = await upload(image)
     console.log(imgUrl)
     try{
-      setIsLoading(true)
       const waterid = await addDoc(collection(db, "watercards"), {
         dairyid: dairyid,
         createdAt: Timestamp.now(),
@@ -49,8 +47,7 @@ const InputCard = () => {
         note: note, 
       })
       console.log('add card success');
-      setIsLoading(false)
-
+      router.replace('/(tabs)/home');
       const DiaryRef = doc(db, "diaries", dairyid.toString())
       await updateDoc(DiaryRef, {
         wateringRecords: arrayUnion(waterid.id)
@@ -60,7 +57,6 @@ const InputCard = () => {
     } finally {
       setIsLoading(false)
     }
-    router.replace('/(tabs)/home')
   }
 
   return (
@@ -114,43 +110,7 @@ const InputCard = () => {
 }
 
 export default InputCard
-// const Bookmark = () => {
-//   const [isWatered, setIsWatered] = useState(false);
-//   const [height, setHeight] = useState('');
-//   const [note, setNote] = useState('');
 
-//   const handleImageUpload = () => {
-//     // Implement image upload logic here
-//     console.log('Image upload triggered');
-//   };
-
-//   return (
-//     <KeyboardAvoidingView
-//       style={styles.container_small}
-//       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-//     >
-//       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-//         <ScrollView contentContainerStyle={styles.scrollContainer}>
-//           <TouchableOpacity onPress={() => {}} style={styles.backButton}>
-//             <Icon name="arrow-back" size={24} color="#000" />
-//           </TouchableOpacity>
-
-//           <TouchableOpacity onPress={handleImageUpload} style={styles.uploadArea}>
-//             <Icon name="file-upload" size={48} color="#888" />
-//             <Text style={styles.uploadText}>upload your plant image!</Text>
-//           </TouchableOpacity>
-//           {/* <UplaodImgBlock 
-//             image={""}
-//             pickImage={()=>{}}
-//             script={"uplaod plant image"}
-//           /> */}
-//         </ScrollView>
-//       </TouchableWithoutFeedback>
-//       <InputCard/>
-//     </KeyboardAvoidingView>
-//   );
-// };
-// export default Bookmark;
 const styles = StyleSheet.create({
   container: {
     flex: 1,

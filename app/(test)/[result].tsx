@@ -50,7 +50,7 @@ const result = () => {
       <Text style={styles.title}>We Find Your Plant!</Text>
       <View style={styles.infoContainer}>
         <ScrollView>
-          <Text className='text-2xl'>This is a {'\n'} {percent} {'\n'} {plantName} {'\n'}</Text>
+          <Text className='text-2xl className="text-center'>This is a {'\n'} {percent} {'\n'} {plantName} {'\n'}</Text>
           <Text>{details}</Text>
        </ScrollView>
       </View>

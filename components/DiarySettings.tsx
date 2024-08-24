@@ -5,9 +5,8 @@ import AddDiaryBtn from './AddDiaryBtn';
 import Slider from '@react-native-community/slider'; 
 import React from 'react'; 
 import upload from 'lib/storage';
-import { setDoc, doc, collection, addDoc } from 'firebase/firestore';
+import { setDoc, doc, collection, addDoc, Timestamp} from 'firebase/firestore';
 import { db } from 'lib/firebase';
-import { Timestamp } from '@google-cloud/firestore';
 
 const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, user, image}) => {
   const [plantName, setPlantName] = useState('');
@@ -18,10 +17,10 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
   const router = useRouter()
   const addToDiary = async () => {
     // console.log(image)
+    setIsAdding(true)
     const imgUrl = await upload(image)
     console.log(imgUrl)
     try{
-      setIsAdding(true)
       await addDoc(collection(db, "diaries"), {
         uid: user.id,
         createdAt: Timestamp.now(), // need to be reconverted to date type 
@@ -54,18 +53,21 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
 
   return (
     <>
+      <Text className="text-white">
+        Your diary's name:
+      </Text>
       <TextInput
         style={styles.input}
-        placeholder="Name your plant"
+        placeholder="Enter a diary name."
         value={plantName}
         onChangeText={setPlantName}
       />
       <Text className="text-white">
-        What's Your Plant? 
+        Your plant's name:
       </Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter the type of your plant"
+        placeholder="Enter the plant name of this diary."
         value={plantType}
         onChangeText={setPlantType}
       />
@@ -99,7 +101,7 @@ export default DiarySettings
 const styles = StyleSheet.create({
     input: {
         height: 40,
-        borderColor: '#fff',
+        borderColor: '#A9A9A9',
         borderWidth: 1,
         borderRadius: 8,
         paddingHorizontal: 8,
@@ -107,7 +109,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ddd',
       },
       sliderContainer: {
-        marginBottom: 16,
+        marginBottom: 15,
       },
       slider: {
         width: '100%',
@@ -117,6 +119,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 16,
+        marginBottom: 0,
       },
 })

@@ -11,16 +11,7 @@ import DiarySettings from '../../components/DiarySettings';
 
 const create = () => {
   const [image, setImage] = useState<string | null>(null);
-  const [isAdding, setIsAdding] = useState(false);
-  const [plantName, setPlantName] = useState("");
-  const [plantType, setPlantType] = useState("");
-  const [wateringFrequency, setPlantWater] = useState("");
-  const [reminder, setReminder] = useState("");
-
-  const { user } = useGlobalContext()
-
-  const [pressed, setIsPressed] = useState(false);
-
+  const { user } = useGlobalContext();
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({

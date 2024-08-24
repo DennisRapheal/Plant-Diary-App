@@ -95,7 +95,7 @@ const setWaterCard = () => {
     <KeyboardAvoidingView 
     style={styles.container}
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    keyboardVerticalOffset={220}>
+    keyboardVerticalOffset={300}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <>
         <UplaodImgBlock 

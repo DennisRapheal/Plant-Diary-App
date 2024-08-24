@@ -3,7 +3,7 @@ import React from 'react'
 import * as ImagePicker from 'expo-image-picker';
 
 
-const ProfileBtn = ({ iconUrl, handlePress}) => {
+const ProfileBtn = ({ iconUrl, handlePress }) => {
     const pickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissionResult.granted === false) {

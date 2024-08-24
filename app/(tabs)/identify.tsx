@@ -14,9 +14,6 @@ const identify = () => {
   const [image, setImage] = useState<string | null>(null);
   // deal with btn
   const [isLoading, setIsLoading] = useState(false);
-  const [resData, setResData] = useState("");
-  const [pressed, setIsPressed] = useState(false);
-
 
   const clickIdentify = async () => {
     const convertFileToBase64 = async (fileUri) => {
@@ -53,7 +50,6 @@ const identify = () => {
             'Content-Type': 'application/json',
           },
         });
-        setResData(response.data)
         console.log('Success:', typeof response.data);
         const strData = response.data
         strData.startingImage = image
@@ -177,9 +173,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   formContainer2: {
-    height: '40%',
+    height: '38%',
     width: '100%',
     padding: 16,
+    paddingTop: 140,
     backgroundColor: '#4a5b4c',
     borderRadius: 10,
   },

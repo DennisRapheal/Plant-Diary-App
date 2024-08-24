@@ -9,13 +9,13 @@ const EmptyState = () => {
     <View className="justify-center items-center px-4">
         <Image source={images.empty} className="w-[270px] h-[215px]" />
         <Text className="text-xl text-center font-psemibold text-white mt-2">
-            No Diary Created
+          Finding your diaries...
         </Text>
         <Text className="text-sm text-center font-pmedium text-gray-100">
-           Go add your first plant diary
+          Go add your first plant diary
         </Text>
         <AddDiaryBtn 
-          title="Create the first video"
+          title="Create a diary!"
           handlePress={() => router.push('/create')}
           isLoading={false}
         />

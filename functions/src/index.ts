@@ -4,6 +4,8 @@ import * as admin from "firebase-admin";
 import {Timestamp} from "firebase-admin/firestore";
 
 admin.initializeApp();
+const firestore = admin.firestore();
+firestore.settings({ignoreUndefinedProperties: true});
 
 const sendPushNotification = async (plantName: string, token: string) => {
   try {
@@ -20,6 +22,7 @@ const sendPushNotification = async (plantName: string, token: string) => {
         },
       }
     );
+    console.log("client token:", token);
     console.log("Notification sent:", response.data);
   } catch (error) {
     console.error("Error sending notification:", error);
@@ -40,15 +43,22 @@ interface Diary {
 interface WaterCard {
   id: string;
   createdAt: Timestamp;
-  wateringFrequency: number;
 }
-
-const UsersDiariesCollection = admin.firestore().collection("diaries");
 
 const getUserDiaries = async (uid: string): Promise<Diary[]> => {
   try {
-    const q = UsersDiariesCollection.where("uid", "==", uid);
+    const UsersDiariesCollection = firestore.collection("diaries");
+    console.log("uid is ss: ", uid);
+    const q = UsersDiariesCollection
+      // .where("uid", "==", uid)
+      .where("waterReminder", "==", true)
+      .where("wateringFrequency", "!=", 0)
+      .select("plantName", "wateringFrequency");
     const querySnapshot = await q.get();
+    if (querySnapshot.empty) {
+      console.log("No diaries found for user:", uid);
+      return [];
+    }
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -59,16 +69,18 @@ const getUserDiaries = async (uid: string): Promise<Diary[]> => {
   }
 };
 
-const diariesCardsCollection = admin.firestore().collection("watercards");
-
 const getLastWatercards = async (diaryId: string): Promise<WaterCard[]> => {
   try {
+    const diariesCardsCollection = firestore.collection("watercards");
     const q = diariesCardsCollection
-      .where("diaryid", "==", diaryId)
-      .where("waterReminder", "==", true)
-      .where("wateringFrequency", "!=", 0)
+      // .where("diaryid", "==", diaryId)
+      .where("watered", "==", false)
       .orderBy("createdAt", "desc");
     const querySnapshot = await q.get();
+    if (querySnapshot.empty) {
+      console.log("No cards in diary:", diaryId);
+      return [];
+    }
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -79,22 +91,31 @@ const getLastWatercards = async (diaryId: string): Promise<WaterCard[]> => {
   }
 };
 
-const tokensCollection = admin.firestore().collection("device_tokens");
-
 const sendUserNotification = async (token: UserToken) => {
+  if (token.uid === undefined || !token.uid) {
+    console.error("uid is undefined for empty.");
+    return;
+  }
   const diaries = await getUserDiaries(token.uid);
   if (!diaries) return;
 
   for (const diary of diaries) {
+    if (diary.id === undefined || !diary.id) {
+      console.error("diaryId is undefined.");
+      return;
+    }
+    console.log("diary id from collection:", diary.id);
     const waterCards = await getLastWatercards(diary.id);
     if (!waterCards) continue;
 
     for (const waterCard of waterCards) {
       const now = Timestamp.now();
-      if ((now.seconds - waterCard.createdAt.seconds) / (60 * 60 * 24) <
+      if (diary.plantName && token.token) {
+        if ((now.seconds - waterCard.createdAt.seconds) / (60 * 60 * 24) <
           diary.wateringFrequency) {
-        await sendPushNotification(diary.plantName, token.token);
-        break;
+          await sendPushNotification(diary.plantName, token.token);
+          break;
+        }
       }
     }
   }
@@ -103,6 +124,7 @@ const sendUserNotification = async (token: UserToken) => {
 export const sendNotifications = functions.pubsub.schedule("every 1 hours")
   .onRun(async () => {
     try {
+      const tokensCollection = admin.firestore().collection("device_tokens");
       const tokensSnapshot = await tokensCollection.get();
       if (tokensSnapshot.empty) {
         console.log("No valid tokens found.");
