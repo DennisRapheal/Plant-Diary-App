@@ -53,12 +53,14 @@ const identify = () => {
             'Content-Type': 'application/json',
           },
         });
+
         setResData(response.data)
-        console.log('Success:', typeof response.data);
+        // console.log('Success:', typeof response.data);
         const strData = response.data
         strData.startingImage = image
         const jsonString = JSON.stringify(strData);
         const encodedData = encodeURIComponent(jsonString);
+        console.log("This is the data: ", jsonString)
         router.push(`/(test)/${encodedData}`);
       } catch (err){
         console.error(err);

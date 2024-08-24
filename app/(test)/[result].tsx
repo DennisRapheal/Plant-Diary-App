@@ -31,18 +31,21 @@ const result = () => {
     // Parse the JSON string to get the original object
     const strData = JSON.parse(decodedData);
     const temp = strData.result.classification.suggestions[0]
-    console.log(strData.result.classification.suggestions[0])
+    // console.log(strData.result.classification.suggestions[0])
     const isPlant = strData.result.is_plant.binary; 
     if (isPlant) {
       setPersent(strData.result.is_plant.probability);
       setPlantName(temp.details.common_names)
       setPlantType(temp.details.taxonomy.family)
       setDetails(temp.details.description.value)
-      setImage(temp.startingImage);
+      setImage(strData.startingImage);
+
+
     } else {
       Alert.alert('Oops...', 'This image is probably not a plant!!!')
     }
   }, []);
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

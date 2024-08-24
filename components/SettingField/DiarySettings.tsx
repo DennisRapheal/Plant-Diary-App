@@ -15,13 +15,14 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
   const [reminder, setReminder] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const router = useRouter()
+  console.log(image)
   const addToDiary = async () => {
     // console.log(image)
+    setIsAdding(true)
     const imgUrl = await upload(image)
-    console.log(imgUrl)
+    // console.log(imgUrl)
     try{
-      setIsAdding(true)
-      await addDoc(collection(db, "diaries"), {
+      const docRef = await addDoc(collection(db, "diaries"), {
         uid: user.id,
         createdAt: Timestamp.now(), // need to be reconverted to date type 
         plantName: plantName,
@@ -31,12 +32,12 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
         startingImage: imgUrl,
         wateringRecords: [],
       })
+      router.replace(`/(diary)/${docRef.id}`)
     } catch (err) {
       console.log('add to diary fail', err);
     } finally {
       setIsAdding(false)
     }
-    router.replace('/home')
   };  
 
     useEffect(() => {
