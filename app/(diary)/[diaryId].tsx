@@ -166,127 +166,130 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#FFFFFF',
-    },
-    cardContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginBottom: 20,
-    },
-    card: {
-        width: CARD_WIDTH,
-        height: 350,
-        backgroundColor: '#6B7969',
-        borderRadius: 10,
-        padding: 10,
-        alignItems: 'center',
-        marginTop: 20,
-        marginHorizontal: SPACING,
-    },
-    cardDate: {
-        color: '#FFFFFF',
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    imagePlaceholder: {
-        width: '90%',
-        height: 200,
-        backgroundColor: '#FFFFFF',
-        marginBottom: 10,
-        borderRadius: 10,
-    },
-    cardDetail: {
-        color: '#FFFFFF',
-    },
-    pagination: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginVertical: 20,
-    },
-    paginationDot: {
-        width: 10,
-        height: 10,
-        backgroundColor: '#D3D3D3',
-        borderRadius: 5,
-        marginHorizontal: 5,
-    },
-    paginationDotActive: {
-        width: 10,
-        height: 10,
-        backgroundColor: '#6B7969',
-        borderRadius: 5,
-        marginHorizontal: 5,
-    },
-    settingsCard: {
-      backgroundColor: '#8A9A8E', // A slightly different shade for distinction
+  container: {
+      flex: 1,
+      backgroundColor: '#FFFFFF',
+  },
+  cardContainer: {
+      flexDirection: 'row',
       justifyContent: 'center',
-    },
-    settingsTitle: {
+      marginBottom: 20,
+  },
+  card: {
+      width: CARD_WIDTH,
+      height: 350,
+      backgroundColor: '#6B7969',
+      borderRadius: 10,
+      padding: 10,
+      alignItems: 'center',
+      marginTop: 20,
+      marginHorizontal: SPACING,
+  },
+  cardDate: {
       color: '#FFFFFF',
       fontSize: 24,
       fontWeight: 'bold',
-    },
-    infoCard: {
-        width: '90%',
-        padding: 20,
-        backgroundColor: '#F5F5F5',
-        borderRadius: 10,
-        alignItems: 'center',
-        marginBottom: 20,
-        alignSelf: 'center',
-    },
-    PlantName: {
-        fontSize: 24,
-        color: '#6B7969',
-        marginBottom: 10,
-    },
-    days: {
-        fontSize: 20,
-        color: '#6B7969',
-        marginBottom: 10,
-    },
-    plantType: {
-        fontSize: 18,
-        color: '#6B7969',
-        marginBottom: 10,
-    },
-    wateringInfo: {
-        fontSize: 16,
-        color: '#6B7969',
-        marginBottom: 10,
-    },
-    reminderRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 10,
-    },
-    reminderText: {
-        fontSize: 16,
-        color: '#6B7969',
-        marginRight: 10,
-    },
-    reminderBar: {
-        width: '100%',
-        height: 10,
-        backgroundColor: '#D3D3D3',
-        borderRadius: 5,
-    },
-    navBar: {
-        width: '100%',
-        height: 60,
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        backgroundColor: '#6B7969',
-        position: 'absolute',
-        bottom: 0,
-    },
-    navIcon: {
-        width: 30,
-        height: 30,
-    },
+      marginBottom: 10,
+  },
+  imagePlaceholder: {
+      width: '90%',
+      height: 200,
+      backgroundColor: '#FFFFFF',
+      marginBottom: 10,
+      borderRadius: 10,
+  },
+  cardDetail: {
+      color: '#FFFFFF',
+  },
+  pagination: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginVertical: 20,
+  },
+  paginationDot: {
+      width: 10,
+      height: 10,
+      backgroundColor: '#D3D3D3',
+      borderRadius: 5,
+      marginHorizontal: 5,
+  },
+  paginationDotActive: {
+      width: 10,
+      height: 10,
+      backgroundColor: '#6B7969',
+      borderRadius: 5,
+      marginHorizontal: 5,
+  },
+  settingsCard: {
+    backgroundColor: '#8A9A8E', // A slightly different shade for distinction
+    justifyContent: 'center',
+  },
+  settingsTitle: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  infoCard: {
+      width: '90%',
+      padding:16,
+      backgroundColor: '#F5F5F5',
+      borderRadius: 10,
+      marginBottom: 20,
+      alignSelf: 'center',
+  },
+  PlantName: {
+      fontSize: 24,
+      color: '#6B7969',
+      marginBottom: 10,
+      textAlign: 'center',
+  },
+  days: {
+      fontSize: 20,
+      color: '#6B7969',
+      marginBottom: 10,
+      textAlign: 'center',
+  },
+  plantType: {
+      fontSize: 18,
+      color: '#6B7969',
+      marginBottom: 10,
+      textAlign: 'center',
+  },
+  wateringInfo: {
+      fontSize: 16,
+      color: '#6B7969',
+      marginBottom: 10,
+      textAlign: 'center',
+  },
+  reminderRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      alignSelf: 'center',
+      marginBottom: 10,
+  },
+  reminderText: {
+      fontSize: 16,
+      color: '#6B7969',
+      marginRight: 10,
+  },
+  reminderBar: {
+      width: '100%',
+      height: 10,
+      backgroundColor: '#D3D3D3',
+      borderRadius: 5,
+  },
+  navBar: {
+      width: '100%',
+      height: 60,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      backgroundColor: '#6B7969',
+      position: 'absolute',
+      bottom: 0,
+  },
+  navIcon: {
+      width: 30,
+      height: 30,
+  },
 });
-
