@@ -20,12 +20,12 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     <TouchableOpacity 
         onPress={handlePress}
         activeOpacity={0.7}
-        className={`bg-secondary rounded-xl min-h-[62px] flex flex-row justify-center items-center ${containerStyles} ${
+        className={`bg-[#4a5b4c] rounded-xl min-h-[62px] flex flex-row justify-center items-center ${containerStyles} ${
             isLoading ? "opacity-50" : ""
         }`}
         disabled={isLoading}
     >
-        <Text className={`text-primary font-psemibold text-lg ${textStyles}`}>
+        <Text className={`text-[#fff7ed] font-psemibold text-lg ${textStyles}`}>
             {title}
         </Text>
 
