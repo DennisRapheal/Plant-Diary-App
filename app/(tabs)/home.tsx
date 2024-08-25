@@ -76,15 +76,25 @@ const home = () => {
   const onDelete = async (docId) => {
     try {
       setDiaries((prevDiaries) => prevDiaries.filter(diary => diary.id !== docId));
-      await deleteDoc(doc(db, "diaries", docId));
 
       const q = query(collection(db, "watercards"), where("diaryid", "==", docId));
       // Step 2: Execute the query
       const querySnapshot = await getDocs(q);
-      querySnapshot.forEach(async (document) => {
-        await deleteDoc(doc(db, "watercards", document.id));
-        console.log(`an water card with ID ${document.id} deleted successfully`);
-      });
+      if (querySnapshot.empty) {
+        console.log("DDDD: ", docId)
+        console.log("DDDD: ", "6sCVDxjiEUl0wbzuCIEh") // the watercard diaryid from firebase console
+        console.log('No water cards found for deletion.');
+      } else {
+        for (const document of querySnapshot.docs) {
+          try {
+            await deleteDoc(doc(db, "watercards", document.id));
+            console.log(`A water card with ID ${document.id} deleted successfully`);
+          } catch (deleteError) {
+            console.error(`Error deleting water card with ID ${document.id}:`, deleteError);
+          }
+        }
+      }
+      await deleteDoc(doc(db, "diaries", docId));
       console.log('Document deleted successfully');
    } catch (err) {
       console.error('Error deleting document:', err);

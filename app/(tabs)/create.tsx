@@ -11,15 +11,8 @@ import DiarySettings from '@/components/SettingField/DiarySettings';
 
 const create = () => {
   const [image, setImage] = useState<string | null>(null);
-  const [isAdding, setIsAdding] = useState(false);
-  const [plantName, setPlantName] = useState("");
-  const [plantType, setPlantType] = useState("");
-  const [wateringFrequency, setPlantWater] = useState("");
-  const [reminder, setReminder] = useState("");
 
   const { user } = useGlobalContext()
-
-  const [pressed, setIsPressed] = useState(false);
 
 
   const pickImage = async () => {
@@ -50,6 +43,7 @@ const create = () => {
           identifyPlantName=""
           identifyPlantType=""
           identifyWater=""
+          identifyPlantDetail=""
           user={user}
           image={image}
         />

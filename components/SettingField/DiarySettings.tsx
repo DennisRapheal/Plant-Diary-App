@@ -8,35 +8,38 @@ import upload from '@/lib/storage';
 import { setDoc, doc, collection, addDoc, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
-const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, user, image}) => {
+const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, identifyPlantDetail, user, image}) => {
   const [plantName, setPlantName] = useState('');
   const [plantType, setPlantType] = useState('');
+  const [plantDetail, setPlantDetail] = useState('');
   const [wateringFrequency, setWateringFrequency] = useState(0);
   const [reminder, setReminder] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const router = useRouter()
+  console.log(image)
   const addToDiary = async () => {
     // console.log(image)
+    setIsAdding(true)
     const imgUrl = await upload(image)
-    console.log(imgUrl)
+    // console.log(imgUrl)
     try{
-      setIsAdding(true)
-      await addDoc(collection(db, "diaries"), {
+      const docRef = await addDoc(collection(db, "diaries"), {
         uid: user.id,
         createdAt: Timestamp.now(), // need to be reconverted to date type 
         plantName: plantName,
         plantType: plantType,
+        plantDetail: plantDetail,
         wateringFrequency: wateringFrequency,
         waterReminder: reminder,
         startingImage: imgUrl,
         wateringRecords: [],
       })
+      router.replace(`/(diary)/${docRef.id}`)
     } catch (err) {
       console.log('add to diary fail', err);
     } finally {
       setIsAdding(false)
     }
-    router.replace('/home')
   };  
 
     useEffect(() => {
@@ -49,7 +52,10 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, use
         if(identifyWater != ""){
             setWateringFrequency(identifyWater);
         }
-    }, [identifyPlantName, identifyPlantType, identifyWater]);
+        if(identifyPlantDetail != ""){
+          setPlantDetail(identifyPlantDetail);
+        }
+    }, [identifyPlantName, identifyPlantType, identifyWater, identifyPlantDetail]);
 
   return (
     <>
@@ -98,7 +104,7 @@ export default DiarySettings
 const styles = StyleSheet.create({
     input: {
         height: 40,
-        borderColor: '#fff',
+        borderColor: '#A9A9A9',
         borderWidth: 1,
         borderRadius: 8,
         paddingHorizontal: 8,
@@ -106,7 +112,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ddd',
       },
       sliderContainer: {
-        marginBottom: 16,
+        marginBottom: 15,
       },
       slider: {
         width: '100%',
@@ -116,6 +122,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 16,
+        marginBottom: 0,
       },
 })

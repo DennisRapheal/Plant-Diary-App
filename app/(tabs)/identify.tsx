@@ -17,7 +17,6 @@ const identify = () => {
   const [resData, setResData] = useState("");
   const [pressed, setIsPressed] = useState(false);
 
-
   const clickIdentify = async () => {
     const convertFileToBase64 = async (fileUri) => {
       if (!fileUri) {
@@ -63,7 +62,7 @@ const identify = () => {
       } catch (err){
         console.error(err);
       } finally {
-        setIsLoading(true)
+        setIsLoading(false)
       }
     } else {
       Alert.alert('Oops...', 'No image is selected. ')
@@ -177,9 +176,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   formContainer2: {
-    height: '40%',
+    height: '38%',
     width: '100%',
     padding: 16,
+    paddingTop: 140,
     backgroundColor: '#4a5b4c',
     borderRadius: 10,
   },

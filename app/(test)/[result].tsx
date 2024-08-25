@@ -11,12 +11,9 @@ import { useGlobalContext } from '@/context/GlobalProvider';
 const result = () => {
   // const [returnData, setReturnData]= useState(null);
   const data= useLocalSearchParams().result;
-  const [returnData, setReturnData] = useState('');
-  const [isLoading, setIsLoading] = useState(false)
   const { user } = useGlobalContext()
   
   // const [waitFetch, setWaitFetch] = useState(true);
-  const [isPlant, setIsPlant] = useState(false);
   const [plantName, setPlantName] = useState("");
   const [percent, setPersent] = useState(0);
   const [plantType, setPlantType] = useState("");
@@ -49,7 +46,7 @@ const result = () => {
       <Text style={styles.title}>We Find Your Plant!</Text>
       <View style={styles.infoContainer}>
         <ScrollView>
-          <Text className='text-2xl'>This is a {percent} {plantName} {'\n'}</Text>
+          <Text className='text-2xl text-center'>This is a {'\n'}{percent}%{'\n'}{plantName}{'\n'}</Text>
           <Text>{details}</Text>
        </ScrollView>
       </View>
@@ -58,6 +55,7 @@ const result = () => {
           identifyPlantName={plantName}
           identifyPlantType={plantType}
           identifyWater={plantWater}
+          identifyPlantDetail={details}
           user={user}
           image={image}
         />
@@ -71,7 +69,7 @@ export default result
 const styles = StyleSheet.create({
   infoContainer: {
     width: '100%',
-    height: "20%",
+    height: "30%",
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,

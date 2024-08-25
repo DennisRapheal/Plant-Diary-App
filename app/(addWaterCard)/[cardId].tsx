@@ -35,10 +35,10 @@ const InputCard = () => {
   };
 
   const addWaterCard = async () => {
+    setIsLoading(true)
     const imgUrl = await upload(image)
     console.log(imgUrl)
     try{
-      setIsLoading(true)
       const waterid = await addDoc(collection(db, "watercards"), {
         dairyid: dairyid,
         createdAt: Timestamp.now(),
@@ -48,8 +48,7 @@ const InputCard = () => {
         note: note, 
       })
       console.log('add card success');
-      setIsLoading(false)
-
+      router.push('/(tabs)/home');
       const DiaryRef = doc(db, "diaries", dairyid.toString())
       await updateDoc(DiaryRef, {
         wateringRecords: arrayUnion(waterid.id)
@@ -59,7 +58,6 @@ const InputCard = () => {
     } finally {
       setIsLoading(false)
     }
-    router.replace('/(tabs)/home')
   }
 
   return (
