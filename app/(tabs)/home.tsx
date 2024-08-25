@@ -107,7 +107,7 @@ const home = () => {
 
   useEffect(() => {
     setLoading(true)
-    try {
+
       registerForPushNotificationsAsync()
       const q = query(collection(db, "diaries"), where("uid", "==", user.id));
       const unsubscribe = onSnapshot(q, async (querySnapshot) => {
@@ -121,9 +121,7 @@ const home = () => {
 
         setLoading(false);
       });
-    }catch (e){
-      console.error(e)
-    }
+
     return () => {
       unsubscribe()
     }
