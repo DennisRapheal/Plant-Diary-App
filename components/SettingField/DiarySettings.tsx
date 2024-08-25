@@ -21,7 +21,7 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, ide
     // console.log(image)
     setIsAdding(true)
     const imgUrl = await upload(image)
-    // console.log(imgUrl)
+    console.log("upload", imgUrl)
     try{
       const docRef = await addDoc(collection(db, "diaries"), {
         uid: user.id,
@@ -35,6 +35,7 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, ide
         wateringRecords: [],
       })
       router.replace(`/(diary)/${docRef.id}`)
+      setIsAdding(false)
     } catch (err) {
       console.log('add to diary fail', err);
     } finally {

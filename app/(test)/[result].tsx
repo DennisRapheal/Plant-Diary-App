@@ -35,7 +35,8 @@ const result = () => {
       setPlantName(temp.details.common_names)
       setPlantType(temp.details.taxonomy.family)
       setDetails(temp.details.description.value)
-      setImage(temp.startingImage);
+      setImage(strData.startingImage);
+      console.log("image url in [result]:", image);
     } else {
       Alert.alert('Oops...', 'This image is probably not a plant!!!')
     }

@@ -54,8 +54,10 @@ const identify = () => {
         });
         setResData(response.data)
         console.log('Success:', typeof response.data);
-        const strData = response.data
-        strData.startingImage = image
+        let strData = response.data
+        console.log("identify img url:", image)
+        strData.startingImage = image;
+        console.log(strData)
         const jsonString = JSON.stringify(strData);
         const encodedData = encodeURIComponent(jsonString);
         router.push(`/(test)/${encodedData}`);
@@ -107,6 +109,8 @@ const identify = () => {
       // Handle the captured photo
       setImage(result.assets[0].uri);
       console.log('success take a photo img');
+    } else {
+      Alert.alert('Oops...', 'Please take a photo img again')
     }
   };
 
