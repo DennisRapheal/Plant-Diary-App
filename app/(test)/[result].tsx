@@ -28,11 +28,10 @@ const result = () => {
     // Parse the JSON string to get the original object
     const strData = JSON.parse(decodedData);
     const temp = strData.result.classification.suggestions[0]
-    console.log(strData.result.classification.suggestions[0])
     const isPlant = strData.result.is_plant.binary; 
     if (isPlant) {
       setPersent(strData.result.is_plant.probability);
-      setPlantName(temp.details.common_names)
+      setPlantName(temp.details.common_names[0])
       setPlantType(temp.details.taxonomy.family)
       setDetails(temp.details.description.value)
       setImage(strData.startingImage);
