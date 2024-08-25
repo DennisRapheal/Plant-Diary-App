@@ -11,6 +11,7 @@ import { deleteDoc, getDocs, Timestamp, collection, query, where, doc, getDoc, u
 import { auth } from '@/lib/firebase';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import { useFocusEffect } from '@react-navigation/native';
+import { getStorage, ref, deleteObject } from 'firebase/storage';
 
 import DiaryCard from '../../components/home/DiaryCard';
 import EmptyState from '../../components/home/EmptyState'
@@ -72,29 +73,55 @@ const home = () => {
 
 
   const [profileImg, setProfileImg] = useState(user.profileImg ? user.profileImg : images.profile);
+  const storage = getStorage();
+  const deleteImg = async (fileRef) => {
+    deleteObject(fileRef)
+      .then(() => {
+        console.log('File deleted successfully');
+      })
+      .catch((error) => {
+        console.error('Error deleting file:', error);
+      });
+  }
 
   const onDelete = async (docId) => {
     try {
       setDiaries((prevDiaries) => prevDiaries.filter(diary => diary.id !== docId));
-
-      const q = query(collection(db, "watercards"), where("diaryid", "==", docId));
-      // Step 2: Execute the query
-      const querySnapshot = await getDocs(q);
-      if (querySnapshot.empty) {
-        console.log("DDDD: ", docId)
-        console.log("DDDD: ", "6sCVDxjiEUl0wbzuCIEh") // the watercard diaryid from firebase console
-        console.log('No water cards found for deletion.');
-      } else {
-        for (const document of querySnapshot.docs) {
-          try {
-            await deleteDoc(doc(db, "watercards", document.id));
-            console.log(`A water card with ID ${document.id} deleted successfully`);
-          } catch (deleteError) {
-            console.error(`Error deleting water card with ID ${document.id}:`, deleteError);
-          }
-        }
+      const diaryRef = doc(db, "diaries", docId);
+      const diaryDoc = await getDoc(diaryRef);
+      if (!diaryDoc.exists()) {
+        console.log("No such diary!");
+        return;
       }
-      await deleteDoc(doc(db, "diaries", docId));
+      const diaryData = diaryDoc.data();
+      if(diaryData.startingImage) {
+        const fileRef = ref(storage, diaryData.startingImage);
+        await deleteImg(fileRef);
+      }
+      const wateringRecords = diaryData?.wateringRecords || [];
+      if (wateringRecords.length === 0) {
+        console.log("No watercards to delete.");
+        return;
+      }
+      // Step 2: Execute the query
+      const watercardsDeletionPromises = wateringRecords.map(async (watercardId: string) => {
+        const watercardRef = doc(db, "watercards", watercardId);
+        const waterDoc = await getDoc(watercardRef);
+        if (!waterDoc.exists()) {
+          console.log("No such waterCard!");
+          return;
+        }
+        const waterData = waterDoc.data();
+        if(waterData.startingImage) {
+          const fileRef = ref(storage, waterData.startingImage);
+          await deleteImg(fileRef);
+        }
+        console.log("delete a watercard");
+        return deleteDoc(watercardRef);
+      });
+      await Promise.all(watercardsDeletionPromises);
+  
+      await deleteDoc(diaryRef);
       console.log('Document deleted successfully');
    } catch (err) {
       console.error('Error deleting document:', err);
@@ -181,7 +208,7 @@ const home = () => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
         <DiaryCard 
-          title={ item.plantName }
+          title={ item.diaryName }
           image={ item.startingImage }
           handlePress={ () => handlePress(item.id) }
           onDelete={ () => onDelete(item.id) }

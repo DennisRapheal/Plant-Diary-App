@@ -30,6 +30,7 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, ide
       const docRef = await addDoc(collection(db, "diaries"), {
         uid: user.id,
         createdAt: Timestamp.now(), // need to be reconverted to date type 
+        diaryName: diaryName,
         plantName: plantName,
         plantType: plantType,
         plantDetail: plantDetail,
