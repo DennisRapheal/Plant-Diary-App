@@ -2,7 +2,7 @@ import { Link, router, useFocusEffect, useGlobalSearchParams, useLocalSearchPara
 import React, { useState, useRef, useEffect } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Switch, Dimensions, Animated, TouchableOpacity, Image, ActivityIndicator} from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { setDoc, doc, collection, addDoc, getDocs, query, where, getDoc, onSnapshot, Timestamp} from 'firebase/firestore';
+import { setDoc, doc, collection, addDoc, getDocs, query, where, getDoc, onSnapshot, Timestamp, updateDoc} from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
@@ -27,12 +27,18 @@ export default function App() {
     const [cardData, setCardData] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [diary, setdiary] = useState(null)
-    const handleSwitch = (e) => {
-      setSwitch(e);
-    }
     const { diaryId } = useGlobalSearchParams()
     const diaryIdString = diaryId?.toString()
-    
+
+    const handleSwitch = async(e) => {
+      setSwitch(e);
+      const diaryRef = doc(db, "diaries", diaryId.toString())
+      const diary = await updateDoc(diaryRef, {
+        waterReminder: e
+      })
+      console.log("update water reminder")
+    }
+
     const handleScroll = (event) => {
       const scrollPosition = event.nativeEvent.contentOffset.x;
       const index = Math.round(scrollPosition / ITEM_WIDTH);
@@ -46,6 +52,7 @@ export default function App() {
         const diaryRef = doc(db, "diaries", diaryId.toString())
         const diary = (await getDoc(diaryRef)).data()
         setdiary(diary)
+        setSwitch(diary.waterReminder)
       }catch(err){
         console.log(err)
       }
@@ -155,7 +162,7 @@ export default function App() {
             <Text style={styles.wateringInfo}> {`Day left to water: ${diary?.createdAt.toDate()} days`}</Text>
             <View style={styles.reminderRow}>
               <Text style={styles.reminderText}>Watering Reminder:</Text>
-              <Switch value={diary?.waterReminder} onValueChange={handleSwitch} />
+              <Switch value={switchValue} onValueChange={handleSwitch} />
             </View>
             <AddDiaryBtn title = "add watering record" handlePress={() => { console.log('diaryId: ', diaryId); router.push(`/(addWaterCard)/${diaryId}`)}} isLoading={false}/>
           </View> }
