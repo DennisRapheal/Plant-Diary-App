@@ -106,19 +106,24 @@ const home = () => {
 
 
   useEffect(() => {
-    registerForPushNotificationsAsync
-    const q = query(collection(db, "diaries"), where("uid", "==", user.id));
-    const unsubscribe = onSnapshot(q, async (querySnapshot) => {
-      const documents = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setDiaries(documents);
+    setLoading(true)
+    try {
+      registerForPushNotificationsAsync()
+      const q = query(collection(db, "diaries"), where("uid", "==", user.id));
+      const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+        const documents = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setDiaries(documents);
 
-      const userDocRef = doc(db, "users", user.id);
-      const userDoc = await getDoc(userDocRef);
-      const userData = userDoc.data();
-      setProfileImg(userData?.profileImg || "");
+        const userDocRef = doc(db, "users", user.id);
+        const userDoc = await getDoc(userDocRef);
+        const userData = userDoc.data();
+        setProfileImg(userData?.profileImg || "");
 
-      setLoading(false);
-    });
+        setLoading(false);
+      });
+    }catch (e){
+      console.error(e)
+    }
     return () => {
       unsubscribe()
     }
