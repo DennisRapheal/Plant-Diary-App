@@ -40,8 +40,6 @@ const App = () => {
             title="Continue with Email"
             handlePress={async () => router.push("/(auth)/sign-in")}
             containerStyles="w-[300px] mt-7"
-            textColor="#3f6212"
-            containColor="#b45309"
           />
         </View>
       </ScrollView>

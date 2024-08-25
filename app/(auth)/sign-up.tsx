@@ -45,7 +45,7 @@ const SignUp = () => {
     }; 
 
     return (
-        <SafeAreaView className="bg-[#0b4739] h-full">
+        <SafeAreaView className="bg-[#f4f4f5] h-full">
           <ScrollView>
             <View
               className="w-full flex justify-center min-h-[85vh] px-4 my-6"
@@ -53,7 +53,7 @@ const SignUp = () => {
                 minHeight: Dimensions.get("window").height - 100,
               }}
             >    
-              <Text className="text-2xl font-semibold text-white mt-10 font-psemibold">
+              <Text className="text-2xl font-semibold text-[#4a5b4c] mt-10 font-psemibold">
                 Sign Up Plantary
               </Text>
 
@@ -93,11 +93,11 @@ const SignUp = () => {
               />
     
               <View className="flex justify-center pt-5 flex-row gap-2">
-                <Text className="text-lg text-gray-100 font-pregular">
+                <Text className="text-lg text-[#7B7B8B] font-pregular">
                   Have an account already?
                 </Text>
                 <Link href="/sign-in"
-                  className="text-lg font-psemibold text-[#bbf7d0]">
+                  className="text-lg font-psemibold text-[#365314]">
                   Sign In
                 </Link>
               </View>

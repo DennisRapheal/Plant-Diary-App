@@ -46,7 +46,7 @@ const SignIn = () => {
     }
 
     return (
-        <SafeAreaView className="bg-[#0b4739] h-full">
+        <SafeAreaView className="bg-[#f4f4f5] h-full">
           <ScrollView>
             <View
               className="w-full flex justify-center min-h-[85vh] px-4 my-6"
@@ -55,7 +55,7 @@ const SignIn = () => {
               }}
             >
     
-              <Text className="text-3xl font-semibold text-[#fff7ed] mt-10 font-psemibold">
+              <Text className="text-3xl font-semibold text-[#4a5b4c] mt-10 font-psemibold">
                 Log in to Plantary
               </Text>
     
@@ -81,17 +81,15 @@ const SignIn = () => {
                 handlePress={submit}
                 containerStyles="mt-7"
                 isLoading={isSubmitting}
-                textColor="#14532d"
-                containColor="#fff7ed"
               />
     
               <View className="flex justify-center pt-5 flex-row gap-2">
-                <Text className="text-lg text-gray-100 font-pregular">
+                <Text className="text-lg text-[#7B7B8B] font-pregular">
                   Don't have an account?
                 </Text>
                 <Link
                   href="/sign-up"
-                  className="text-lg font-psemibold text-[#bbf7d0]"
+                  className="text-lg font-psemibold text-[#365314]"
                 >
                   Sign Up
                 </Link>
