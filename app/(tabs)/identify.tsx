@@ -14,9 +14,6 @@ const identify = () => {
   const [image, setImage] = useState<string | null>(null);
   // deal with btn
   const [isLoading, setIsLoading] = useState(false);
-  const [resData, setResData] = useState("");
-  const [pressed, setIsPressed] = useState(false);
-
 
   const clickIdentify = async () => {
     const convertFileToBase64 = async (fileUri) => {
@@ -54,18 +51,15 @@ const identify = () => {
           },
         });
 
-        setResData(response.data)
-        // console.log('Success:', typeof response.data);
         const strData = response.data
         strData.startingImage = image
         const jsonString = JSON.stringify(strData);
         const encodedData = encodeURIComponent(jsonString);
-        console.log("This is the data: ", jsonString)
         router.push(`/(test)/${encodedData}`);
       } catch (err){
         console.error(err);
       } finally {
-        setIsLoading(true)
+        setIsLoading(false)
       }
     } else {
       Alert.alert('Oops...', 'No image is selected. ')
@@ -110,6 +104,8 @@ const identify = () => {
       // Handle the captured photo
       setImage(result.assets[0].uri);
       console.log('success take a photo img');
+    } else {
+      Alert.alert('Oops...', 'Please take a photo img again')
     }
   };
 
@@ -179,9 +175,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   formContainer2: {
-    height: '40%',
+    height: '38%',
     width: '100%',
     padding: 16,
+    paddingTop: 140,
     backgroundColor: '#4a5b4c',
     borderRadius: 10,
   },

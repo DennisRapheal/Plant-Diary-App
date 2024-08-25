@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList, ScrollView} from 'react-native'
+import { StyleSheet, Text, View, FlatList, Alert} from 'react-native'
 import React, { useEffect, useState }from 'react'
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -7,7 +7,7 @@ import { images } from "../../constants";
 import { icons } from "../../constants";
 import upload from '@/lib/storage';
 import { db } from '@/lib/firebase';
-import { deleteDoc, getDocs, Timestamp, collection, query, where, doc, updateDoc, getDoc, setDoc} from 'firebase/firestore';
+import { deleteDoc, getDocs, Timestamp, collection, query, where, doc, getDoc, updateDoc, setDoc} from 'firebase/firestore';
 import { auth } from '@/lib/firebase';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import { useFocusEffect } from '@react-navigation/native';
@@ -71,20 +71,30 @@ const home = () => {
   }
 
 
-  const [profileImg, setProfileImg] = useState(user.startingImage ? user.startingImage : images.profile);
+  const [profileImg, setProfileImg] = useState(user.profileImg ? user.profileImg : images.profile);
 
   const onDelete = async (docId) => {
     try {
       setDiaries((prevDiaries) => prevDiaries.filter(diary => diary.id !== docId));
-      await deleteDoc(doc(db, "diaries", docId));
 
       const q = query(collection(db, "watercards"), where("diaryid", "==", docId));
       // Step 2: Execute the query
       const querySnapshot = await getDocs(q);
-      querySnapshot.forEach(async (document) => {
-        await deleteDoc(doc(db, "watercards", document.id));
-        console.log(`an water card with ID ${document.id} deleted successfully`);
-      });
+      if (querySnapshot.empty) {
+        console.log("DDDD: ", docId)
+        console.log("DDDD: ", "6sCVDxjiEUl0wbzuCIEh") // the watercard diaryid from firebase console
+        console.log('No water cards found for deletion.');
+      } else {
+        for (const document of querySnapshot.docs) {
+          try {
+            await deleteDoc(doc(db, "watercards", document.id));
+            console.log(`A water card with ID ${document.id} deleted successfully`);
+          } catch (deleteError) {
+            console.error(`Error deleting water card with ID ${document.id}:`, deleteError);
+          }
+        }
+      }
+      await deleteDoc(doc(db, "diaries", docId));
       console.log('Document deleted successfully');
    } catch (err) {
       console.error('Error deleting document:', err);
@@ -102,16 +112,13 @@ const home = () => {
         const querySnapshot = await getDocs(q);
         const documents = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        const p = query(collection(db, "users"), where("id", "==", user.id));
-        const querySnapshot2 = await getDocs(p);
-        const documents2 = querySnapshot2.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const userDocRef = doc(db, "users", user.id);
+        const userDoc = await getDoc(userDocRef);
+        const userData = userDoc.data();
+        const tempImg = userData?.profileImg;
 
         setDiaries(documents);
-        if (documents2.length > 0) {
-          setProfileImg(documents2[0].profileImg);
-        } else {
-          console.log("No user profile found.");
-        }
+        setProfileImg(tempImg);
     } catch (err) {
         setError(err as Error);
     } finally {
@@ -138,23 +145,23 @@ const home = () => {
       aspect: [4, 3],
       quality: 1,
     });
-
+    const temp_img = result.assets[0].uri;
     if (!result.canceled) {
-      console.log("re"); 
-      setProfileImg(result.assets[0].uri);
+      setProfileImg(temp_img);
+    } else {
+      Alert.alert('Oops...', 'Please upload an image again')
     }
 
-    const imgUrl = await upload(profileImg)
+    const imgUrl = await upload(temp_img)
     console.log(imgUrl)
     try{
       const docRef = doc(db, 'users', user.id);
       await updateDoc(docRef, {
-        // createdAt: Date.now().toString(),
-        profileImg: profileImg, 
+        profileImg: temp_img, 
       })
-      console.log('doc is revised')
+      console.log('profileImg is revised',  temp_img)
     } catch (err) {
-      console.log('setWaterCard', err);
+      console.error("Err",err);
     } 
   }
 

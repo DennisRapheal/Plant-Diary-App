@@ -15,7 +15,7 @@ const EmptyState = () => {
            Go add your first plant diary
         </Text>
         <AddDiaryBtn 
-          title="Create the first video"
+          title="Create a diary!"
           handlePress={() => router.push('/create')}
           isLoading={false}
         />
