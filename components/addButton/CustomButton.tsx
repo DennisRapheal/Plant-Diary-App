@@ -7,6 +7,8 @@ interface CustomButtonProps {
     containerStyles: string;
     textStyles?: string; // Make this optional
     isLoading?: boolean;
+    textColor?: string,
+    containColor?: string,
 }
 // a button components
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -14,18 +16,20 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     handlePress,
     containerStyles,
     textStyles,
+    textColor,
+    containColor,
     isLoading,
 }) => {
   return (
     <TouchableOpacity 
         onPress={handlePress}
         activeOpacity={0.7}
-        className={`bg-secondary rounded-xl min-h-[62px] flex flex-row justify-center items-center ${containerStyles} ${
+        className={`bg-[${containColor}] rounded-xl min-h-[62px] flex flex-row justify-center items-center ${containerStyles} ${
             isLoading ? "opacity-50" : ""
         }`}
         disabled={isLoading}
     >
-        <Text className={`text-primary font-psemibold text-lg ${textStyles}`}>
+        <Text className={`text-[${textColor}] font-psemibold text-lg ${textStyles}`}>
             {title}
         </Text>
 
