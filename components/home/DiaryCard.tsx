@@ -4,17 +4,18 @@ import { icons } from '../../constants';
 import { Link, router } from 'expo-router';
 import { deleteDoc, getDocs, collection, query, doc} from 'firebase/firestore';
 import { db } from 'lib/firebase';
+import LoadingScreen from '../Loading/Loading';
 
 const DiaryCard = ({title, image, handlePress, onDelete}) => {
   
   return (
       <View style={styles.card} >
         <TouchableOpacity style={styles.content} onPress = {handlePress}>
-          <Image 
+          {image ? (<Image 
             source={{ uri: image }}
             resizeMode="cover"
             style={styles.image}
-          />
+          />) : <LoadingScreen/>}
         </TouchableOpacity>
         <View style={styles.footer}>
           <Text style={styles.title}>

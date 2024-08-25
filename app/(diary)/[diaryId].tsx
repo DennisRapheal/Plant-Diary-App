@@ -23,8 +23,8 @@ export default function App() {
     const [switchValue, setSwitch] = useState(false)
     const scrollX = useRef(new Animated.Value(0)).current
     const [activeIndex, setActiveIndex] = useState(0)
-    const [cards, setCards] = useState(null)
-    const [cardData, setCardData] = useState(null)
+    const [cards, setCards] = useState([])
+    const [cardData, setCardData] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [diary, setdiary] = useState(null)
     const handleSwitch = (e) => {
@@ -60,9 +60,10 @@ export default function App() {
             { key: diaryIdString, type: 'settings' },
             ...cards.map(doc => ({
               key: doc.id, 
-              date: doc.date,
+              date: doc.createdAt,
               height: doc.height,
-              note: doc.note
+              note: doc.note,
+              Image: doc.startingImage,
             })),
             { key: 'empty-right' },
           ];
@@ -78,8 +79,7 @@ export default function App() {
 
 
 
-    useFocusEffect(
-      React.useCallback(
+      useEffect(
       () => {
         setIsLoading(true)
         fetch_data()
@@ -99,7 +99,7 @@ export default function App() {
         return () => {
           unSub()
         }
-    }, []))
+    }, [])
 
     const Days = (createdAt) => {
       if(!createdAt) return 0
@@ -136,7 +136,7 @@ export default function App() {
           />
 
           <View style={styles.pagination}>
-            {cards?.slice(-1, 1).map((_, index) => (
+            {cardData?.slice(-1, 1).map((_, index) => (
               <View
                 key={index}
                 style={[

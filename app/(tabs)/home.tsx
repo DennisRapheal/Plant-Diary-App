@@ -2,12 +2,12 @@ import { StyleSheet, Text, View, FlatList, Alert} from 'react-native'
 import React, { useEffect, useState }from 'react'
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { router, Stack } from 'expo-router';
+import { Navigator, router, Stack } from 'expo-router';
 import { images } from "../../constants";
 import { icons } from "../../constants";
 import upload from '@/lib/storage';
 import { db } from '@/lib/firebase';
-import { deleteDoc, getDocs, Timestamp, collection, query, where, doc, getDoc, updateDoc, setDoc} from 'firebase/firestore';
+import { deleteDoc, getDocs, Timestamp, collection, query, where, doc, getDoc, updateDoc, setDoc, onSnapshot} from 'firebase/firestore';
 import { auth } from '@/lib/firebase';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import { useFocusEffect } from '@react-navigation/native';
@@ -35,7 +35,6 @@ const home = () => {
 
   useEffect(() => {
     const updateToken = async() => {
-      console.log(expoPushToken)
       if(!expoPushToken) return
       await setDoc(doc(db, "device_tokens", user.id), {
         token: expoPushToken,
@@ -43,10 +42,10 @@ const home = () => {
         createdAt: Timestamp.now(),
       })
       console.log("token has been updated")
-
-      // console.log(toSendOrNotToSend(1, Timestamp.now()))
     }
-    updateToken()
+    if(user){
+      updateToken()
+    }
   }, [expoPushToken])
 
   async function registerForPushNotificationsAsync() {
@@ -71,7 +70,7 @@ const home = () => {
   }
 
 
-  const [profileImg, setProfileImg] = useState(user.profileImg ? user.profileImg : images.profile);
+  const [profileImg, setProfileImg] = useState(user?.profileImg ? user?.profileImg : images.profile);
 
   const onDelete = async (docId) => {
     try {
@@ -105,37 +104,35 @@ const home = () => {
     router.push(`/(diary)/${diaryid}`)
   }
 
-  const getData = async() => {
-    try {
-        setLoading(true); 
-        const q = query(collection(db, "diaries"), where("uid", "==", user.id));
-        const querySnapshot = await getDocs(q);
-        const documents = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        const userDocRef = doc(db, "users", user.id);
-        const userDoc = await getDoc(userDocRef);
-        const userData = userDoc.data();
-        const tempImg = userData?.profileImg;
+  useEffect(() => {
+    registerForPushNotificationsAsync
+    const q = query(collection(db, "diaries"), where("uid", "==", user.id));
+    const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+      const documents = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setDiaries(documents);
 
-        setDiaries(documents);
-        setProfileImg(tempImg);
-    } catch (err) {
-        setError(err as Error);
-    } finally {
-        setLoading(false);
+      const userDocRef = doc(db, "users", user.id);
+      const userDoc = await getDoc(userDocRef);
+      const userData = userDoc.data();
+      setProfileImg(userData?.profileImg || "");
+
+      setLoading(false);
+    });
+    return () => {
+      unsubscribe()
     }
-  }
+  }, [])
 
-  useFocusEffect(
-    React.useCallback(() => {
-      getData();
-    }, [])
-  );
-
-  const handleLogout = (e) => {
-    e.preventDefault(); 
-    router.replace('/')
-    auth.signOut()
+  const handleLogout = async(e) => {
+    e.preventDefault()
+    try {
+      await auth.signOut();
+      router.replace('/');
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Handle error (e.g., show a notification to the user)
+    }
   };
 
   const changeProfile = async () => {
@@ -171,7 +168,7 @@ const home = () => {
   return (
     <SafeAreaView className="bg-white" style={{ flex: 1 }}>
       <View className="w-full flex-row justify-between  items-center"  style={{height: "15%" }}> 
-        <ProfileBtn iconUrl = {profileImg} handlePress={changeProfile}/>
+        <ProfileBtn iconUrl = {profileImg ? profileImg : ""} handlePress={changeProfile}/>
         <Text>{user?.username}</Text>
         <LogoutBtn iconUrl = {icons.logout} handlePress={handleLogout}/>
       </View>

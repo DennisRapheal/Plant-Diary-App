@@ -30,6 +30,7 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, ide
       const docRef = await addDoc(collection(db, "diaries"), {
         uid: user.id,
         createdAt: Timestamp.now(), // need to be reconverted to date type 
+        diaryName: diaryName,
         plantName: plantName,
         plantType: plantType,
         plantDetail: plantDetail,
@@ -38,7 +39,12 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, ide
         startingImage: imgUrl,
         wateringRecords: [],
       })
-      router.replace(`/(diary)/${docRef.id}`)
+      setDiaryName('')
+      setPlantName('')
+      setPlantType('')
+      setWateringFrequency(0)
+      setReminder(false)
+      router.replace(`/(tabs)/home`)
     } catch (err) {
       console.log('add to diary fail', err);
     } finally {
