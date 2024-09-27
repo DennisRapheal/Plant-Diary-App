@@ -51,21 +51,25 @@ const home = () => {
 
   async function registerForPushNotificationsAsync() {
     let token;
-    if (Platform.OS === 'ios') {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-  
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
+    try {
+      if (Platform.OS === 'ios') {
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+    
+        if (existingStatus !== 'granted') {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
+        }
+    
+        if (finalStatus !== 'granted') {
+          alert('Failed to get push token for push notification!');
+          return;
+        }
       }
-  
-      if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
-        return;
-      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+    }catch(e){
+      console.log(e)
     }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
     return token;
   }
 
@@ -130,6 +134,7 @@ const home = () => {
     router.push(`/(diary)/${diaryid}`)
   }
 
+  console.log(diaries)
 
   useEffect(() => {
     setLoading(true)

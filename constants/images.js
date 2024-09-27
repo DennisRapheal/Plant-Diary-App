@@ -5,5 +5,7 @@ import logo from "../assets/images/logo.png";
 import logoSmall from "../assets/images/logo-small.png";
 import empty from "../assets/images/empty.png";
 import plant from "../assets/images/plant.jpg"
+import hint from "../assets/images/IMG_1285.jpg"
 
-export default { profile, cards, path, logo, logoSmall, empty, plant };
+
+export default { profile, cards, path, logo, logoSmall, empty, plant, hint };

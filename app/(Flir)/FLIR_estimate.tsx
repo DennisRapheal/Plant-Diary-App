@@ -1,9 +1,11 @@
-import { Linking, Button, Text, KeyboardAvoidingView, KeyboardAvoidingViewBase, TouchableWithoutFeedback, Platform, TextInput, Switch, Keyboard } from 'react-native';
+import { Linking, Button, Text, KeyboardAvoidingView, KeyboardAvoidingViewBase, TouchableWithoutFeedback, Platform, TextInput, Switch, Keyboard, StyleSheet, ScrollView, Image } from 'react-native';
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AddDiaryBtn from '@/components/addButton/AddDiaryBtn';
 import UplaodImgBlock from '@/components/UplaodImgBlock';
+import { isLoaded, isLoading } from 'expo-font';
+import { images } from '@/constants';
 
 const FLIR_estimate = () => {
   const openFlirApp = () => {
@@ -19,9 +21,9 @@ const FLIR_estimate = () => {
       .catch((err) => console.error('An error occurred', err));
   };
 
-  const [isWatered, setIsWatered] = useState(false);
   const [height, setHeight] = useState('');
   const [note, setNote] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <KeyboardAvoidingView 
@@ -30,26 +32,59 @@ const FLIR_estimate = () => {
     keyboardVerticalOffset={250}>
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <>
+      <ScrollView style={styles.formContainer2}>
+      <View>
+      <Text style={{ marginBottom: 10 }}>Please follow these steps:</Text>
+      <Text style={{ marginBottom: 5 }}>1. Open the FLIR ONE app.</Text>
+      <Text style={{ marginBottom: 5 }}>2. Connect your FLIR camera.</Text>
+      <Text style={{ marginBottom: 5 }}>3. 連接後，按下方按鈕並選擇測量模式，選擇兩個以上的測量點（無色的點）。</Text>
+      <Text style={{ marginBottom: 5 }}>4. 將中心點對準預測量植物的葉片，確保另一個點對準室溫的物體。</Text>
+      <Text style={{ marginBottom: 10 }}>5. 將個點的溫度分別填入下面的輸入格中，中心點填在中心的輸入格。</Text>
+      <Image
+        style={styles.image}
+        source={images.hint} // URL to a remote image
+        resizeMode='contain'
+      />      
+      <AddDiaryBtn
+        title={"Open FLIR app"}
+        handlePress={openFlirApp}
+        isLoading={isLoading}
+      />
+    </View>
 
-      <View style={styles.formContainer2}>
-        <Text style={styles.dateText}>2024 8/15</Text>
         <View style={styles.row}>
-          <Text>Watered</Text>
-          <Switch
-            value={isWatered}
-            onValueChange={setIsWatered}
-            trackColor={{ false: "#767577", true: "#81b0ff" }}
-            thumbColor={isWatered ? "#f5dd4b" : "#f4f3f4"}
-          />
-          <Text>Height</Text>
-          <TextInput
-            style={styles.heightInput}
-            value={height}
-            onChangeText={setHeight}
-            placeholder="cm"
-            keyboardType="numeric"
-          />
+
+            
+            <TextInput
+                style={styles.heightInput}
+                value={height}
+                onChangeText={setHeight}
+                placeholderTextColor="gray"
+                keyboardType="numeric"
+            />
+            <Text style={styles.text}>℃</Text>
+            <TextInput
+                style={styles.heightInput}
+                value={height}
+                onChangeText={setHeight}
+                placeholder="cm"
+                keyboardType="numeric"
+            />
+            <Text style={styles.text}>℃</Text>
+            <TextInput
+                style={styles.heightInput}
+                value={height}
+                onChangeText={setHeight}
+                placeholder="cm"
+                keyboardType="numeric"
+            />
+            <Text style={styles.text}>℃</Text>
         </View>
+        <AddDiaryBtn
+          title={"Check plant status"}
+          handlePress={() => {}}
+          isLoading={isLoading}
+        />
         <TextInput
           style={styles.noteInput}
           value={note}
@@ -57,12 +92,8 @@ const FLIR_estimate = () => {
           placeholder="write down some words..."
           multiline
         />
-        <AddDiaryBtn
-          title={"Add Card!"}
-          handlePress={addWaterCard}
-          isLoading={isLoading}
-        />
-      </View>
+
+      </ScrollView>
       </>
     </TouchableWithoutFeedback>
   </KeyboardAvoidingView>
@@ -74,6 +105,13 @@ const FLIR_estimate = () => {
 export default FLIR_estimate;
 
 const styles = StyleSheet.create({
+    image: {
+        width: '100%',  // Ensure the image takes up the full width of the container
+        borderRadius: 10,
+      },
+    text: {
+        color: "gray"
+    },
     container: {
       flex: 1,
       alignItems: 'center',
@@ -104,6 +142,7 @@ const styles = StyleSheet.create({
       height: '40%',
       width: '100%',
       padding: 16,
+      gap: 40,
       borderRadius: 10,
     },
     uploadArea: {
@@ -112,7 +151,7 @@ const styles = StyleSheet.create({
       borderStyle: 'dashed',
       borderColor: '#888',
       borderRadius: 10,
-      justifyContent: 'center',
+      justifyContent: 'center',   
       alignItems: 'center',
       marginTop: 60,
     },
@@ -142,7 +181,8 @@ const styles = StyleSheet.create({
       borderColor: '#888',
       borderRadius: 5,
       paddingHorizontal: 10,
-      width: 50,
+      height: 50,
+      width: 80,
     },
     noteInput: {
       borderWidth: 1,
