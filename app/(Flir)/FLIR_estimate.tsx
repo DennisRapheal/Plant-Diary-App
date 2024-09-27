@@ -117,7 +117,7 @@ const FLIR_estimate = () => {
                   source={images.hint}
                   resizeMode='contain'
                 />
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={openFlirApp}>
                     <Text style={{color: 'white', fontWeight: '800'}}>Open FLIR app</Text>
                 </TouchableOpacity>
 

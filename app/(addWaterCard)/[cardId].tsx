@@ -65,114 +65,80 @@ const InputCard = () => {
   }
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={250}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <>
-        <UplaodImgBlock 
-          image={image}
-          pickImage={pickImage}
-          script={"Upload an image!"}
-        />
-        <View style={styles.formContainer2}>
-          <Text style={styles.dateText}>2024 8/15</Text>
-          <View style={styles.row}>
-            <Text>Watered</Text>
-            <Switch
-              value={isWatered}
-              onValueChange={setIsWatered}
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={isWatered ? "#f5dd4b" : "#f4f3f4"}
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView 
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView contentContainerStyle={styles.scrollViewContent}>
+            <UplaodImgBlock 
+              image={image}
+              pickImage={pickImage}
+              script={"Upload an image!"}
             />
-            <Text>Height</Text>
-            <TextInput
-              style={styles.heightInput}
-              value={height}
-              onChangeText={setHeight}
-              placeholder="cm"
-              keyboardType="numeric"
-            />
-          </View>
-          <TextInput
-            style={styles.noteInput}
-            value={note}
-            onChangeText={setNote}
-            placeholder="write down some words..."
-            multiline
-          />
-          <AddDiaryBtn
-            title={"Add Card!"}
-            handlePress={addWaterCard}
-            isLoading={isLoading}
-          />
-          <AddDiaryBtn
-            title={"Check your plant with FLIR"}
-            handlePress={check_FLIR}
-            isLoading={isLoading}
-          />
-        </View>
-        </>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+            <View style={styles.formContainer}>
+              <Text style={styles.dateText}>2024 8/15</Text>
+              <View style={styles.row}>
+                <Text>Watered</Text>
+                <Switch
+                  value={isWatered}
+                  onValueChange={setIsWatered}
+                  trackColor={{ false: "#767577", true: "#81b0ff" }}
+                  thumbColor={isWatered ? "#f5dd4b" : "#f4f3f4"}
+                />
+                <Text>Height</Text>
+                <TextInput
+                  style={styles.heightInput}
+                  value={height}
+                  onChangeText={setHeight}
+                  placeholder="cm"
+                  keyboardType="numeric"
+                />
+              </View>
+              <TextInput
+                style={styles.noteInput}
+                value={note}
+                onChangeText={setNote}
+                placeholder="write down some words..."
+                multiline
+              />
+              <AddDiaryBtn
+                title={"Add Card!"}
+                handlePress={addWaterCard}
+                isLoading={isLoading}
+              />
+              <AddDiaryBtn
+                title={"Check your plant with FLIR"}
+                handlePress={check_FLIR}
+                isLoading={isLoading}
+              />
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   )
 }
 
-export default InputCard
+export default InputCard;
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
   container: {
     flex: 1,
-    alignItems: 'center',
+  },
+  scrollViewContent: {
+    flexGrow: 1,
     padding: 20,
-    backgroundColor: '#f5f5f5',
-    marginTop: 50,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 20,
-  },
-  container_small: {
+  formContainer: {
     flex: 1,
-    height: "100%",
-  },
-  scrollContainer: {
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-  },
-  formContainer2: {
-    height: '40%',
-    width: '100%',
     padding: 16,
     borderRadius: 10,
-  },
-  uploadArea: {
-    height: 250,
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: '#888',
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 60,
-  },
-  uploadText: {
-    marginTop: 10,
-    color: '#888',
-  },
-  infoCard: {
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
-    padding: 20,
-    marginTop: 20,
   },
   dateText: {
     fontSize: 18,
@@ -197,9 +163,8 @@ const styles = StyleSheet.create({
     borderColor: '#888',
     borderRadius: 5,
     padding: 10,
-    height: 200,
+    height: 100,
     textAlignVertical: 'top',
+    marginBottom: 20,
   },
 });
-
-
