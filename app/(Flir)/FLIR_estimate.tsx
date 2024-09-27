@@ -1,4 +1,4 @@
-import { Linking, Button, Text, KeyboardAvoidingView, KeyboardAvoidingViewBase, TouchableWithoutFeedback, Platform, TextInput, Switch, Keyboard, StyleSheet, ScrollView, Image } from 'react-native';
+import { Linking, Button, Text, KeyboardAvoidingView, KeyboardAvoidingViewBase, TouchableWithoutFeedback, Platform, TextInput, Switch, Keyboard, StyleSheet, ScrollView, Image, Alert } from 'react-native';
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,9 +21,30 @@ const FLIR_estimate = () => {
       .catch((err) => console.error('An error occurred', err));
   };
 
+  const calculateTemp = () => {
+    if (!tempPlant || !environmentTemp){
+        Alert.alert("please enter all the temperature.")
+    }
+    const roomTemp = Number(environmentTemp)
+    const plantTemp = Number(tempPlant)
+
+    if (plantTemp - roomTemp > 1){
+        setDehydrate(true);
+        setSuggestion("你的植物可能正在發送缺水的信號，請幫它澆水！")
+    }else{
+        setDehydrate(false);
+        setSuggestion("你的植物似乎沒有到急需要水！")
+    }
+
+  }
+
+  const [tempPlant, setTempPlant] = useState('')
+  const [environmentTemp, setEnvironmentTemp] = useState('')
   const [height, setHeight] = useState('');
   const [note, setNote] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [dehydrate, setDehydrate] = useState(false);
+  const [suggestion, setSuggestion] = useState('');
 
   return (
     <KeyboardAvoidingView 
@@ -37,7 +58,7 @@ const FLIR_estimate = () => {
       <Text style={{ marginBottom: 10 }}>Please follow these steps:</Text>
       <Text style={{ marginBottom: 5 }}>1. Open the FLIR ONE app.</Text>
       <Text style={{ marginBottom: 5 }}>2. Connect your FLIR camera.</Text>
-      <Text style={{ marginBottom: 5 }}>3. 連接後，按下方按鈕並選擇測量模式，選擇兩個以上的測量點（無色的點）。</Text>
+      <Text style={{ marginBottom: 5 }}>3. 連接後，按下方按鈕並選擇測量模式，選擇兩個測量點（無色的點）。</Text>
       <Text style={{ marginBottom: 5 }}>4. 將中心點對準預測量植物的葉片，確保另一個點對準室溫的物體。</Text>
       <Text style={{ marginBottom: 10 }}>5. 將個點的溫度分別填入下面的輸入格中，中心點填在中心的輸入格。</Text>
       <Image
@@ -57,24 +78,16 @@ const FLIR_estimate = () => {
             
             <TextInput
                 style={styles.heightInput}
-                value={height}
-                onChangeText={setHeight}
+                value={environmentTemp}
+                onChangeText={setEnvironmentTemp}
                 placeholderTextColor="gray"
                 keyboardType="numeric"
             />
             <Text style={styles.text}>℃</Text>
             <TextInput
                 style={styles.heightInput}
-                value={height}
-                onChangeText={setHeight}
-                placeholder="cm"
-                keyboardType="numeric"
-            />
-            <Text style={styles.text}>℃</Text>
-            <TextInput
-                style={styles.heightInput}
-                value={height}
-                onChangeText={setHeight}
+                value={tempPlant}
+                onChangeText={setTempPlant}
                 placeholder="cm"
                 keyboardType="numeric"
             />
@@ -82,13 +95,13 @@ const FLIR_estimate = () => {
         </View>
         <AddDiaryBtn
           title={"Check plant status"}
-          handlePress={() => {}}
+          handlePress={calculateTemp}
           isLoading={isLoading}
         />
         <TextInput
           style={styles.noteInput}
-          value={note}
-          onChangeText={setNote}
+          value={suggestion}
+          onChangeText={setSuggestion}
           placeholder="write down some words..."
           multiline
         />
