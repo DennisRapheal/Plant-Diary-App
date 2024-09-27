@@ -19,7 +19,7 @@ const InputCard = () => {
   const [image, setImage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const pickImage = async () => {
+  const pickImageFromLibrary = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images, // Allow only images
       allowsEditing: true,
@@ -29,11 +29,59 @@ const InputCard = () => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      console.log('success pick img');
     } else {
       Alert.alert('Oops...', 'Please upload an image again')
     }
   };
 
+  const takePhotoWithCamera = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permission Required',
+        'Sorry, we need camera permissions to make this work!',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+    
+    let result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      // Handle the captured photo
+      setImage(result.assets[0].uri);
+      console.log('success take a photo img');
+    } else {
+      Alert.alert('Oops...', 'Please take a photo img again')
+    }
+  };
+
+  const showImagePickerOptions = () => {
+    Alert.alert(
+      'Select Image Source',
+      'Choose an option to select an image:',
+      [
+        {
+          text: 'Camera',
+          onPress: takePhotoWithCamera,
+        },
+        {
+          text: 'Library',
+          onPress: pickImageFromLibrary,
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ]
+    );
+  };
   const check_FLIR = () => {
     router.push('/(Flir)/FLIR_estimate')
   }
@@ -74,7 +122,7 @@ const InputCard = () => {
           <ScrollView contentContainerStyle={styles.scrollViewContent}>
             <UplaodImgBlock 
               image={image}
-              pickImage={pickImage}
+              pickImage={showImagePickerOptions}
               script={"Upload an image!"}
             />
             <View style={styles.formContainer}>
