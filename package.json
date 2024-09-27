@@ -51,6 +51,7 @@
     "react-native-appwrite": "^0.4.0",
     "react-native-background-timer": "^2.4.1",
     "react-native-dotenv": "^3.4.11",
+    "react-native-flir": "^0.3.1",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-permissions": "^4.1.5",
     "react-native-push-notification": "^8.1.1",
@@ -79,5 +80,6 @@
     "tailwindcss": "3.3.2",
     "typescript": "~5.3.3"
   },
-  "private": true
+  "private": true,
+  "packageManager": "yarn@1.22.15+sha512.033a040f18f6e7a04e4bf8ea0d7037a63ca19a2e054410543206284c7238108b7612144492f1f4b283d512d9c3f8340825f53947d6ca85c6751fd97cccf59ea0"
 }

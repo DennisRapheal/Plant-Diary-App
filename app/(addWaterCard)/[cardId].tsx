@@ -34,6 +34,10 @@ const InputCard = () => {
     }
   };
 
+  const check_FLIR = () => {
+    router.push('/(Flir)/FLIR_estimate')
+  }
+
   const addWaterCard = async () => {
     setIsLoading(true)
     const imgUrl = await upload(image)
@@ -101,6 +105,11 @@ const InputCard = () => {
           <AddDiaryBtn
             title={"Add Card!"}
             handlePress={addWaterCard}
+            isLoading={isLoading}
+          />
+          <AddDiaryBtn
+            title={"Check your plant with FLIR"}
+            handlePress={check_FLIR}
             isLoading={isLoading}
           />
         </View>

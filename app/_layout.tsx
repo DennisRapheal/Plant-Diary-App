@@ -44,6 +44,7 @@ const RootLayout = () => {
                 <Stack.Screen name="(setWaterCard)/[wateringId]" options={{ headerShown: false}} />
                 <Stack.Screen name="(addWaterCard)/[cardId]" options={{ headerShown: false}} />
                 <Stack.Screen name="(test)/[result]" options={{ headerShown: false}} />
+                <Stack.Screen name="(Flir)/FLIR_estimate" options={{ headerShown: false}} />
             </Stack>
         </GlobalProvider>
     )
