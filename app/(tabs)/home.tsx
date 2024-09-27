@@ -134,7 +134,6 @@ const home = () => {
     router.push(`/(diary)/${diaryid}`)
   }
 
-  console.log(diaries)
 
   useEffect(() => {
     setLoading(true)
