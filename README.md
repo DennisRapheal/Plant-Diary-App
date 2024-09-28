@@ -57,7 +57,7 @@ yarn install
 cd ios
 pod install
 ```
-- run on ios
+- run on ios simulator
 ```bash
 npx expo run:ios
 ```
