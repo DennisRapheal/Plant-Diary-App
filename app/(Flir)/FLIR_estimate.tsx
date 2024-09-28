@@ -6,12 +6,58 @@ import {
 } from 'react-native';
 import AddDiaryBtn from '@/components/addButton/AddDiaryBtn';
 import { images } from '@/constants';
+import * as ImagePicker from 'expo-image-picker';
+import UplaodImgBlock from '@/components/UplaodImgBlock';
+import MlkitOcr from 'react-native-mlkit-ocr';
+
 
 const FLIR_estimate = () => {
   const [tempPlant, setTempPlant] = useState('');
   const [environmentTemp, setEnvironmentTemp] = useState('');
   const [suggestion, setSuggestion] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [image, setImage] = useState('');
+
+  const detectTextFromImage = async (imagePath) => {
+    try {
+      const result = await MlkitOcr.detectFromUri(imagePath);
+      console.log('OCR Result:', result);
+
+      // Extract temperatures using regex (to match values like '26.3°')
+      const temperaturePattern = /\d{2}\.\d°/g;
+      const temperatures = result.map(block => block.text).join(' ').match(temperaturePattern);
+
+      if (temperatures && temperatures.length >= 2) {
+        setEnvironmentTemp(temperatures[0].replace('°', ''));
+        setTempPlant(temperatures[1].replace('°', ''));
+        console.log('Detected temperatures:', temperatures);
+      } else {
+        Alert.alert('Temperature Detection Failed', 'Could not detect temperatures in the image.');
+      }
+    } catch (error) {
+      console.error("Error detecting text from image:", error);
+      Alert.alert("Error", "Failed to analyze image. Please try again.");
+    }
+  };
+
+
+
+  const pickImageFromLibrary = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, // Allow only images
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+      console.log('success pick img');
+      await detectTextFromImage(image);
+    } else {
+      Alert.alert('Oops...', 'Please upload an image again')
+    }
+  };
 
   const openFlirApp = () => {
     const url = 'https://apps.apple.com/tw/app/flir-one/id875842742';
@@ -54,6 +100,12 @@ const FLIR_estimate = () => {
           <TouchableOpacity style={styles.helpButton} onPress={() => setModalVisible(true)}>
             <Text style={styles.helpButtonText}>?</Text>
           </TouchableOpacity>
+
+          <UplaodImgBlock
+              image={image}
+              pickImage={pickImageFromLibrary}
+              script={"Upload an image!"}
+          />
 
           <View style={styles.inputContainer}>
             <View style={styles.inputWrapper}>
