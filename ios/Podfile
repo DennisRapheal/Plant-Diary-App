@@ -32,6 +32,11 @@ platform :ios, podfile_properties['ios.deploymentTarget'] || '13.4'
 install! 'cocoapods',
   :deterministic_uuids => false
 
+pod 'FirebaseCore', :modular_headers => true
+pod 'Firebase', :modular_headers => true
+pod 'FirebaseCoreInternal', :modular_headers => true
+pod 'GoogleUtilities', :modular_headers => true
+
 prepare_react_native_project!
 
 target 'plantdev' do
