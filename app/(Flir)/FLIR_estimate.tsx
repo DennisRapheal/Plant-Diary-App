@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View, ScrollView, StyleSheet, Keyboard, SafeAreaView,
   TextInput, Text, TouchableOpacity, Modal, Image, Alert, Linking,
@@ -9,6 +9,8 @@ import { images } from '@/constants';
 import * as ImagePicker from 'expo-image-picker';
 import UplaodImgBlock from '@/components/UplaodImgBlock';
 import MlkitOcr from 'react-native-mlkit-ocr';
+import TextRecognition from 'react-native-text-recognition';
+
 
 
 const FLIR_estimate = () => {
@@ -17,30 +19,37 @@ const FLIR_estimate = () => {
   const [suggestion, setSuggestion] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [image, setImage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [dehydration, setDehydration] = useState(false);
 
   const detectTextFromImage = async (imagePath) => {
-    try {
+    setIsLoading(true)
+    try { 
       const result = await MlkitOcr.detectFromUri(imagePath);
+      // const result = await TextRecognition.recognize(imagePath);
+  
       console.log('OCR Result:', result);
-
-      // Extract temperatures using regex (to match values like '26.3°')
-      const temperaturePattern = /\d{2}\.\d°/g;
-      const temperatures = result.map(block => block.text).join(' ').match(temperaturePattern);
-
-      if (temperatures && temperatures.length >= 2) {
-        setEnvironmentTemp(temperatures[0].replace('°', ''));
-        setTempPlant(temperatures[1].replace('°', ''));
-        console.log('Detected temperatures:', temperatures);
+  
+      // Extract numeric values with optional decimal points (match values like '26.3', '25', etc.)
+      const numericPattern = /\d+(\.\d+)?/g;
+      const extractedText = result.map(block => block.text).join(' ');
+  
+      // Extract all valid numbers
+      const numbers = extractedText.match(numericPattern);
+      if (numbers && numbers.length >= 2) {
+        setEnvironmentTemp(numbers[1]);  // First detected number
+        setTempPlant(numbers[0]);        // Second detected number
+        console.log('Detected temperatures:', numbers);
       } else {
-        Alert.alert('Temperature Detection Failed', 'Could not detect temperatures in the image.');
+        Alert.alert('Temperature Detection Failed', 'Could not detect valid temperatures in the image.');
       }
     } catch (error) {
       console.error("Error detecting text from image:", error);
       Alert.alert("Error", "Failed to analyze image. Please try again.");
+    }finally{
+      setIsLoading(false);
     }
   };
-
-
 
   const pickImageFromLibrary = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -53,11 +62,15 @@ const FLIR_estimate = () => {
     if (!result.canceled) {
       setImage(result.assets[0].uri);
       console.log('success pick img');
-      await detectTextFromImage(image);
+      // await detectTextFromImage(image);
     } else {
       Alert.alert('Oops...', 'Please upload an image again')
     }
   };
+
+  useEffect(() => {
+    detectTextFromImage(image)
+  }, [image])
 
   const openFlirApp = () => {
     const url = 'https://apps.apple.com/tw/app/flir-one/id875842742';
@@ -72,7 +85,8 @@ const FLIR_estimate = () => {
       .catch((err) => console.error('An error occurred', err));
   };
 
-  const calculateTemp = () => {
+  const calculateTemp = async() => {
+    // await detectTextFromImage(image);
     if (!tempPlant || !environmentTemp) {
       Alert.alert("Please enter all the temperatures.");
       return;
@@ -81,8 +95,10 @@ const FLIR_estimate = () => {
     const plantTemp = Number(tempPlant);
 
     if (plantTemp - roomTemp > 1) {
+      setDehydration(true)
       setSuggestion("Your plant may be sending signals of dehydration, please water it!");
     } else {
+      setDehydration(false)
       setSuggestion("Your plant doesn't seem to need water urgently!");
     }
   };
@@ -135,11 +151,12 @@ const FLIR_estimate = () => {
           <AddDiaryBtn
             title="Check plant status"
             handlePress={calculateTemp}
-            isLoading={false}
+            isLoading={isLoading}
           />
 
+
           <TextInput
-            style={styles.noteInput}
+            style={dehydration ? styles.noteInput : styles.noteInput_normal}
             value={suggestion}
             onChangeText={setSuggestion}
             placeholder="Write down some notes..."
@@ -251,14 +268,24 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   noteInput: {
-    borderWidth: 1,
-    borderColor: '#888',
+    fontSize: 15,
+    fontWeight: 800,
+    color: 'red',
     borderRadius: 5,
     padding: 10,
     height: 150,
     textAlignVertical: 'top',
     marginTop: 20,
-    backgroundColor: '#fff',
+  },
+  noteInput_normal: {
+    fontSize: 15,
+    fontWeight: 800,
+    color: '#4a5b4c',
+    borderRadius: 5,
+    padding: 10,
+    height: 150,
+    textAlignVertical: 'top',
+    marginTop: 20,
   },
   modalContainer: {
     flex: 1,
