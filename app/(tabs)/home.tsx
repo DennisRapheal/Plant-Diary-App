@@ -91,40 +91,55 @@ const home = () => {
       setDiaries((prevDiaries) => prevDiaries.filter(diary => diary.id !== docId));
       const diaryRef = doc(db, "diaries", docId);
       const diaryDoc = await getDoc(diaryRef);
+
       if (!diaryDoc.exists()) {
         console.log("No such diary!");
         return;
       }
+
       const diaryData = diaryDoc.data();
-      if(diaryData.startingImage) {
+
+      if (diaryData.startingImage) {
+        console.log('Deleting diary starting image:', diaryData.startingImage);
         const fileRef = ref(storage, diaryData.startingImage);
         await deleteImg(fileRef);
+      } else {
+        console.warn('No starting image to delete for diary:', docId);
       }
+
       const wateringRecords = diaryData?.wateringRecords || [];
       if (wateringRecords.length === 0) {
         console.log("No watercards to delete.");
         return;
       }
       // Step 2: Execute the query
-      const watercardsDeletionPromises = wateringRecords.map(async (watercardId: string) => {
+      const watercardsDeletionPromises = wateringRecords.map(async (watercardId) => {
         const watercardRef = doc(db, "watercards", watercardId);
         const waterDoc = await getDoc(watercardRef);
+
         if (!waterDoc.exists()) {
           console.log("No such waterCard!");
           return;
         }
+
         const waterData = waterDoc.data();
-        if(waterData.startingImage) {
+
+        if (waterData.startingImage) {
+          console.log('Deleting watercard starting image:', waterData.startingImage);
           const fileRef = ref(storage, waterData.startingImage);
           await deleteImg(fileRef);
+        } else {
+          console.warn('No starting image to delete for watercard:', watercardId);
         }
+
         console.log("delete a watercard");
         return deleteDoc(watercardRef);
       });
+
       await Promise.all(watercardsDeletionPromises);
-  
       await deleteDoc(diaryRef);
       console.log('Document deleted successfully');
+
    } catch (err) {
       console.error('Error deleting document:', err);
     }

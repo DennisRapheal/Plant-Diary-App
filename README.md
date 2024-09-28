@@ -41,6 +41,7 @@ Join our community of developers creating universal apps.
 # Plant-Diary-App
 
 NativeWind
+
 ```bash
 npm install nativewind
 npm install --save-dev tailwindcss@3.3.2
