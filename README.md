@@ -45,3 +45,19 @@ NativeWind
 npm install nativewind
 npm install --save-dev tailwindcss@3.3.2
 ```
+
+# How to get started
+
+- remove node_modules, and run
+```bash
+yarn install
+```
+- go to /ios and install the podfile
+```bash
+cd ios
+pod install
+```
+- run on ios
+```bash
+npx expo run:ios
+```
