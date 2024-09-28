@@ -74,7 +74,7 @@ const useNotify = (): PushNotificationState => {
     useEffect (() => {
 
         registerForPushNotificationAsync().then((token) => {
-            setExpoPushToken(token.data);
+            setExpoPushToken(token?.data);
         })
         
         notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {

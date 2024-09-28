@@ -30,7 +30,7 @@ const result = () => {
     const temp = strData.result.classification.suggestions[0]
     const isPlant = strData.result.is_plant.binary; 
     if (isPlant) {
-      setPersent(strData.result.is_plant.probability);
+      setPersent(strData.result.is_plant.probability * 100);
       setPlantName(temp.details.common_names[0])
       setPlantType(temp.details.taxonomy.family)
       setDetails(temp.details.description.value)
