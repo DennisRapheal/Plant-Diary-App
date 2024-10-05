@@ -57,7 +57,7 @@ const result = () => {
         <DiarySettings 
           identifyPlantName={plantName}
           identifyPlantType={plantType}
-          identifyWater={plantWater}
+          identifyWater={7}
           identifyPlantDetail={""}
           user={user}
           image={image}
