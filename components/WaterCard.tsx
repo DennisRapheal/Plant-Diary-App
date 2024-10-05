@@ -25,7 +25,7 @@ const WaterCard = ({ item, index, scrollX, width}) => {
 
     const router = useRouter()
 
-    if (item.type === 'settings') {
+    if (item.type === 'settings' && item.key) {
         const { diaryIdString } = item.key
         return (
           <TouchableOpacity onPress={() => {router.push(`/(diarySetting)/${item.key}`)}}>

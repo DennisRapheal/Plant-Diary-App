@@ -20,26 +20,29 @@ const result = () => {
   const [details, setDetails] = useState("");
   const [plantWater, setPlantWater] = useState("");
   const [image, setImage] = useState("");
-  const [plantDetail, setPlantDetail] = useState("");
 
-  
   useEffect(() => {
     const decodedData = decodeURIComponent(data);
     // Parse the JSON string to get the original object
     const strData = JSON.parse(decodedData);
-    const temp = strData.result.classification.suggestions[0]
-    const isPlant = strData.result.is_plant.binary; 
-    if (isPlant) {
-      setPersent(strData.result.is_plant.probability);
-      setPlantName(temp.details.common_names[0])
-      setPlantType(temp.details.taxonomy.family)
-      setDetails(temp.details.description.value)
-      setImage(strData.startingImage);
+    const temp = strData.result?.classification?.suggestions[0]
+    const isPlant = strData.result?.is_plant?.binary; 
+    if (isPlant && temp) {
+      if (temp.details) {
+        setPersent(strData.result?.is_plant?.probability * 100);
+        setPlantName(temp.details?.common_names?.[0])
+        setPlantType(temp.details.taxonomy?.family)
+        setDetails(temp.details.description?.value)
+        console.log("WATERING: ", temp.details?.best_watering)
+        setPlantWater(temp.details?.best_watering)
+        setImage(strData?.startingImage);
+      } else {
+        Alert.alert('Oops...', 'The plant info. is not sufficient')
+      }
     } else {
       Alert.alert('Oops...', 'This image is probably not a plant!!!')
     }
   }, []);
-
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -47,16 +50,15 @@ const result = () => {
       <View style={styles.infoContainer}>
         <ScrollView>
           <Text className='text-2xl text-center'>This is a {'\n'}{percent}%{'\n'}{plantName}{'\n'}</Text>
-          <Text>{details}</Text>
-          <Text>{'Watering Advice: ' + plantWater + '\n\n' + details}</Text>       
-        </ScrollView>
+          <Text>{plantWater + '\n\n' + details}</Text>
+       </ScrollView>
       </View>
       <View style={styles.formContainer}>
         <DiarySettings 
           identifyPlantName={plantName}
           identifyPlantType={plantType}
           identifyWater={plantWater}
-          identifyPlantDetail={details}
+          identifyPlantDetail={""}
           user={user}
           image={image}
         />

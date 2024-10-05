@@ -43,7 +43,7 @@ const identify = () => {
 
         const response = await axios.post('https://plant.id/api/v3/identification', apiInfo, {
           params: {
-            details: 'common_names,url,description,taxonomy,rank,gbif_id,inaturalist_id,image,synonyms,edible_parts,watering',
+            details: 'common_names,url,description,taxonomy,rank,gbif_id,inaturalist_id,image,synonyms,edible_parts,watering,best_watering',
             language: 'en',
           },
           headers: {

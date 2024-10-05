@@ -18,12 +18,21 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, ide
   const [isAdding, setIsAdding] = useState(false);
   const router = useRouter()
   console.log(image)
+
   const addToDiary = async () => {
     // console.log(image)
     setIsAdding(true)
     if (image === "" || image === undefined) {
       Alert.alert('Oops...', 'Diary cover needed!')
     }
+
+    if (diaryName === '') {
+      Alert.alert('Oops...', 'Diary name needed!')
+    }
+
+    if (plantName === '') {
+      Alert.alert('Oops...', 'Plant name needed!')
+    }    
     const imgUrl = await upload(image)
     console.log("upload", imgUrl)
     try{

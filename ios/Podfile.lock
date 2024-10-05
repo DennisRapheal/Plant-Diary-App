@@ -13,7 +13,7 @@ PODS:
     - ExpoModulesCore
   - EXNotifications (0.28.16):
     - ExpoModulesCore
-  - Expo (51.0.31):
+  - Expo (51.0.34):
     - ExpoModulesCore
   - expo-dev-client (4.0.27):
     - EXManifests
@@ -236,7 +236,7 @@ PODS:
     - ExpoModulesCore
   - ExpoKeepAwake (13.0.2):
     - ExpoModulesCore
-  - ExpoModulesCore (1.12.23):
+  - ExpoModulesCore (1.12.24):
     - DoubleConversion
     - glog
     - RCT-Folly (= 2024.01.01.00)
@@ -1941,7 +1941,7 @@ SPEC CHECKSUMS:
   EXJSONUtils: 30c17fd9cc364d722c0946a550dfbf1be92ef6a4
   EXManifests: c1fab4c3237675e7b0299ea8df0bcb14baca4f42
   EXNotifications: b1b174716b287e161350a18de1d253aabceeea2d
-  Expo: 4773e11951abd0f666f67023f0cb1d48c3e8a32b
+  Expo: 963ef4ae102e4f4ac114a8510d70127c44adffbf
   expo-dev-client: 85deba11af998ea86e62093b17fce56aa2c6f26b
   expo-dev-launcher: 32092e97bdd090fba8c435e3cf0b42e8f6d5bb63
   expo-dev-menu: 5316028281f4f6ebd2abd60db02428cdb857ed8d
@@ -1953,7 +1953,7 @@ SPEC CHECKSUMS:
   ExpoHead: fcb28a68ed4ba28f177394d2dfb8a0a8824cd103
   ExpoImagePicker: 12a420923383ae38dccb069847218f27a3b87816
   ExpoKeepAwake: 3b8815d9dd1d419ee474df004021c69fdd316d08
-  ExpoModulesCore: 6eace956653820f5f937112a190f7ccb5254d5e2
+  ExpoModulesCore: 9dce0f6e9703e0173043e0928cec54060618f815
   ExpoSystemUI: d4f065a016cae6721b324eb659cdee4d4cf0cb26
   ExpoWebBrowser: 7595ccac6938eb65b076385fd23d035db9ecdc8e
   EXSplashScreen: 1214f27b64e691160687922f8cb862c6477be9e1
@@ -2040,6 +2040,10 @@ SPEC CHECKSUMS:
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 950bbfd7e6f04790fdb51149ed51df41f329fcc8
 
+<<<<<<< HEAD
 PODFILE CHECKSUM: d8b03382773bb80b876afdd45bed3e22d677f95f
+=======
+PODFILE CHECKSUM: 459fb7529c189d1498deb36717ed4157f571b47c
+>>>>>>> 958f21754913fc367ed164d764e4937353e1e00e
 
 COCOAPODS: 1.15.2
