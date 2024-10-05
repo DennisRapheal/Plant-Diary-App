@@ -23,6 +23,9 @@ const FLIR_estimate = () => {
   const [dehydration, setDehydration] = useState(false);
 
   const detectTextFromImage = async (imagePath) => {
+    if(!imagePath){
+      return;
+    }
     setIsLoading(true)
     try { 
       const result = await MlkitOcr.detectFromUri(imagePath);

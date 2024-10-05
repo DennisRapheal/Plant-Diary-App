@@ -48,7 +48,8 @@ const result = () => {
         <ScrollView>
           <Text className='text-2xl text-center'>This is a {'\n'}{percent}%{'\n'}{plantName}{'\n'}</Text>
           <Text>{details}</Text>
-       </ScrollView>
+          <Text>{'Watering Advice: ' + plantWater + '\n\n' + details}</Text>       
+        </ScrollView>
       </View>
       <View style={styles.formContainer}>
         <DiarySettings 
