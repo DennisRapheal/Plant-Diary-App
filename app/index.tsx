@@ -15,9 +15,6 @@ import useNotify from '@/hooks/useNotify';
 const App = () => {
     const { expoPushToken, notification } = useNotify(); 
     const data = JSON.stringify(notification, undefined, 2);
-    useEffect(() => {
-      console.log("Token: ", expoPushToken?.data ?? "")
-    }, [expoPushToken])
     const { user, isLogged } = useGlobalContext()
     if( isLogged ) return <Redirect href="/home"/>
 

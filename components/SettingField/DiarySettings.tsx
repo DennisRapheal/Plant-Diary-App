@@ -79,7 +79,7 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, ide
     return (
       <>
         <Text className="text-white">
-          Your diary's name:
+          Name your diary:
         </Text>
         <TextInput
           style={styles.input}
@@ -88,7 +88,7 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, ide
           onChangeText={setDiaryName}
         />
         <Text className="text-white">
-          Your plant's name:
+          Name your plant:
         </Text>
         <TextInput
           style={styles.input}
@@ -97,7 +97,7 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, ide
           onChangeText={setPlantName}
         />
         <View style={styles.sliderContainer}>
-          <Text className="text-white">How often do you want to water it? (days)</Text>
+          <Text className="text-white">Watering frequency (days)</Text>
           <Slider
             style={styles.slider}
             minimumValue={0}
@@ -106,7 +106,7 @@ const DiarySettings = ({identifyPlantName, identifyPlantType, identifyWater, ide
             value={wateringFrequency}
             onValueChange={setWateringFrequency}
           />
-          <Text className="text-white">{wateringFrequency} days</Text>
+          <Text className="text-white">every {wateringFrequency} days</Text>
         </View>
         <View style={styles.switchContainer}>
           <Text className="text-white">Watering reminder:</Text>

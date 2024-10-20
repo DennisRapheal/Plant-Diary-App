@@ -241,7 +241,7 @@ const home = () => {
                 Welcome Back!
               </Text>
               <Text className="text-sm font-pmedium text-gray-100">
-                Add your diary
+                Add to your diary
               </Text>
             </View>
           </View>

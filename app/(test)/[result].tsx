@@ -30,7 +30,7 @@ const result = () => {
     if (isPlant && temp) {
       if (temp.details) {
         setPersent(strData.result?.is_plant?.probability * 100);
-        setPlantName(temp.details?.common_names?.[0])
+        setPlantName(temp.details?.common_names[0])
         setPlantType(temp.details.taxonomy?.family)
         setDetails(temp.details.description?.value)
         console.log("WATERING: ", temp.details?.best_watering)
@@ -46,7 +46,7 @@ const result = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>We Find Your Plant!</Text>
+      <Text style={styles.title}>We Found Your Plant!</Text>
       <View style={styles.infoContainer}>
         <ScrollView>
           <Text className='text-2xl text-center'>This is a {'\n'}{percent}%{'\n'}{plantName}{'\n'}</Text>
@@ -57,7 +57,7 @@ const result = () => {
         <DiarySettings 
           identifyPlantName={plantName}
           identifyPlantType={plantType}
-          identifyWater={plantWater}
+          identifyWater={2}
           identifyPlantDetail={""}
           user={user}
           image={image}

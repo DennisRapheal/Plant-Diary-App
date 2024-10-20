@@ -24,7 +24,7 @@ const toSendOrNotToSend = (interval, createdAt) => {
 };
 // Cron job to run every hour
 exports.sendScheduledNotifications = functions.pubsub
-    .schedule("every 24 hours")
+    .schedule("every 5 minutes")
     .onRun(async () => {
     const db = admin.firestore();
     try {
