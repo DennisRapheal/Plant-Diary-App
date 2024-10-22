@@ -7,7 +7,7 @@ import UplaodImgBlock from '../../components/UplaodImgBlock';
 import AddDiaryBtn from '../../components/addButton/AddDiaryBtn';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
-const ApiKey = 'pDnMKtAz45bKVamyRJETuNGYMf4t472T9316950fqoVlWy83Aw';
+const ApiKey = 'RFlxkjiX4nokXB4Czg2qxwxr83I7KbNnaHGUr32WmKXSJ1afsT';
 
 const identify = () => {
   const router = useRouter();

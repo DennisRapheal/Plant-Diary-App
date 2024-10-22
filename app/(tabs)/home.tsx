@@ -34,6 +34,8 @@ const home = () => {
   const { expoPushToken, notification } = useNotify(); 
   const data = JSON.stringify(notification, undefined, 2);
 
+  console.log("")
+
   useEffect(() => {
     const updateToken = async() => {
       if(!expoPushToken) return
@@ -87,18 +89,20 @@ const home = () => {
   }
 
   const onDelete = async (docId) => {
+    setLoading(true);
+    let isWatercardsDeleted = false; // flag to track whether watercards deletion succeeded
     try {
-      setDiaries((prevDiaries) => prevDiaries.filter(diary => diary.id !== docId));
       const diaryRef = doc(db, "diaries", docId);
       const diaryDoc = await getDoc(diaryRef);
-
+  
       if (!diaryDoc.exists()) {
         console.log("No such diary!");
         return;
       }
-
+  
       const diaryData = diaryDoc.data();
-
+  
+      // Delete diary starting image
       if (diaryData.startingImage) {
         console.log('Deleting diary starting image:', diaryData.startingImage);
         const fileRef = ref(storage, diaryData.startingImage);
@@ -106,44 +110,51 @@ const home = () => {
       } else {
         console.warn('No starting image to delete for diary:', docId);
       }
-
+  
+      // Delete watercards
       const wateringRecords = diaryData?.wateringRecords || [];
-      if (wateringRecords.length === 0) {
+      if (wateringRecords.length > 0) {
+        const watercardsDeletionPromises = wateringRecords.map(async (watercardId) => {
+          const watercardRef = doc(db, "watercards", watercardId);
+          const waterDoc = await getDoc(watercardRef);
+  
+          if (waterDoc.exists()) {
+            const waterData = waterDoc.data();
+  
+            // Delete watercard starting image
+            if (waterData.startingImage) {
+              console.log('Deleting watercard starting image:', waterData.startingImage);
+              const fileRef = ref(storage, waterData.startingImage);
+              await deleteImg(fileRef);
+            }
+  
+            console.log("Deleting watercard:", watercardId);
+            await deleteDoc(watercardRef);
+          }
+        });
+  
+        await Promise.all(watercardsDeletionPromises);
+      } else {
         console.log("No watercards to delete.");
-        return;
       }
-      // Step 2: Execute the query
-      const watercardsDeletionPromises = wateringRecords.map(async (watercardId) => {
-        const watercardRef = doc(db, "watercards", watercardId);
-        const waterDoc = await getDoc(watercardRef);
-
-        if (!waterDoc.exists()) {
-          console.log("No such waterCard!");
-          return;
-        }
-
-        const waterData = waterDoc.data();
-
-        if (waterData.startingImage) {
-          console.log('Deleting watercard starting image:', waterData.startingImage);
-          const fileRef = ref(storage, waterData.startingImage);
-          await deleteImg(fileRef);
-        } else {
-          console.warn('No starting image to delete for watercard:', watercardId);
-        }
-
-        console.log("delete a watercard");
-        return deleteDoc(watercardRef);
-      });
-
-      await Promise.all(watercardsDeletionPromises);
-      await deleteDoc(diaryRef);
-      console.log('Document deleted successfully');
-
-   } catch (err) {
-      console.error('Error deleting document:', err);
+  
+      isWatercardsDeleted = true; // mark successful deletion of watercards
+  
+    } catch (err) {
+      console.log('Error deleting related documents:', err);
+    } finally {
+      // Always attempt to delete the diary itself, regardless of previous errors
+      try {
+        const diaryRef = doc(db, "diaries", docId);
+        await deleteDoc(diaryRef);
+        console.log('Diary document deleted successfully');
+      } catch (err) {
+        console.error('Error deleting the diary:', err);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
+  };
 
   const handlePress = async(diaryid) => {
     router.push(`/(diary)/${diaryid}`)

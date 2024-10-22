@@ -1,12 +1,15 @@
-const fetch = require('node-fetch');
+
+
+// const fetch = require('node-fetch');
+
+
 
 const sendPushNotification = async (expoPushToken) => {
   const message = {
     to: expoPushToken, // Expo push token you obtained
     sound: 'default',
-    title: 'New Notification!',
-    body: 'This is the body of the notification.',
-    data: { someData: 'extra data goes here' },
+    title: 'Remember to water your Ivy plant!',
+    body: 'Your plant is dying, please give it water!',
   };
 
   await fetch('https://exp.host/--/api/v2/push/send', {
@@ -26,5 +29,5 @@ const sendPushNotification = async (expoPushToken) => {
   });
 };
 
-const token = 'ExponentPushToken[7ixQqJNuhY0IrTD7eiRJ0J]'
+const token = 'ExponentPushToken[AOn2pDHy7LKMcoBkZcISxc]'
 sendPushNotification(token);
