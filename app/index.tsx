@@ -32,7 +32,7 @@ const App = () => {
       >
         <View className="w-full flex justify-center items-center min-h-[85xh] px-4">
           <Image
-            source={images.cards}
+            source={{ uri: 'gs://plant-diary-357fb.appspot.com/images/C93F01AE-9101-42A7-B968-C1644EF9C63A.jpg' }}
             className="w-[1000px] h-[600px]"
             resizeMode="contain"
           />
